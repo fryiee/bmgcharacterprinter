@@ -22,6 +22,7 @@ module.exports = {
                 'screen-3/4': '75vw',
                 'screen-1/3': '33vw',
                 'screen-1/2': '50vw',
+                '1/8': '12.5%'
             },
             maxWidth: {
                 'screen-1/10': '10vw',

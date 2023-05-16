@@ -1,9 +1,9 @@
 @layer base {
     body, html {
-        @apply overflow-x-hidden;
+        @apply overflow-x-hidden min-h-screen overflow-y-auto;
     }
 
     main {
-        @apply min-h-screen w-full flex flex-col;
+        @apply h-full w-full flex flex-col;
     }
 }

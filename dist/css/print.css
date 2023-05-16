@@ -1,6 +1,20 @@
+.printonly {
+    display: none;
+}
+
 @media print {
     .noprint {
-        display: none
+        display: none;
+    }
+
+    .printonly {
+        display: block;
+    }
+
+    .printbreak {
+        page-break-after: always;
+        -moz-column-break-after: page;
+             break-after: page;
     }
 }
 

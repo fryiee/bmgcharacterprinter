@@ -2,5 +2,10 @@
     "/js/app.js": "/js/app.js",
     "/css/print.css": "/css/print.css",
     "/css/app.css": "/css/app.css",
-    "/img/icons/SPECIAL_ICON.png": "/img/icons/SPECIAL_ICON.png"
+    "/img/icons/BLOOD_ICON.png": "/img/icons/BLOOD_ICON.png",
+    "/img/icons/RANK_FREE_AGENT_ICON.png": "/img/icons/RANK_FREE_AGENT_ICON.png",
+    "/img/icons/RANK_HENCHMAN_ICON.png": "/img/icons/RANK_HENCHMAN_ICON.png",
+    "/img/icons/RANK_LEADER_ICON.png": "/img/icons/RANK_LEADER_ICON.png",
+    "/img/icons/SPECIAL_ICON.png": "/img/icons/SPECIAL_ICON.png",
+    "/img/icons/STUN_ICON.png": "/img/icons/STUN_ICON.png"
 }

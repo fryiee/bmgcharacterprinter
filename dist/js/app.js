@@ -6462,12 +6462,38 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
 /* harmony export */ });
+function _toConsumableArray(arr) { return _arrayWithoutHoles(arr) || _iterableToArray(arr) || _unsupportedIterableToArray(arr) || _nonIterableSpread(); }
+function _nonIterableSpread() { throw new TypeError("Invalid attempt to spread non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); }
+function _unsupportedIterableToArray(o, minLen) { if (!o) return; if (typeof o === "string") return _arrayLikeToArray(o, minLen); var n = Object.prototype.toString.call(o).slice(8, -1); if (n === "Object" && o.constructor) n = o.constructor.name; if (n === "Map" || n === "Set") return Array.from(o); if (n === "Arguments" || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n)) return _arrayLikeToArray(o, minLen); }
+function _iterableToArray(iter) { if (typeof Symbol !== "undefined" && iter[Symbol.iterator] != null || iter["@@iterator"] != null) return Array.from(iter); }
+function _arrayWithoutHoles(arr) { if (Array.isArray(arr)) return _arrayLikeToArray(arr); }
+function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len = arr.length; for (var i = 0, arr2 = new Array(len); i < len; i++) arr2[i] = arr[i]; return arr2; }
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
   name: 'Character',
-  props: ['character', 'affiliations', 'traits'],
+  props: ['character', 'affiliations', 'traits', 'equipment', 'upgrades', 'weapons'],
   data: function data() {
     return {
-      icons: ['SPECIAL_ICON', 'RANK_HENCHMAN_ICON', 'RANK_LEADER_ICON', 'RANK_FREE_AGENT_ICON']
+      icons: ['SPECIAL_ICON', 'RANK_HENCHMAN_ICON', 'RANK_SIDEKICK_ICON', 'RANK_LEADER_ICON', 'RANK_FREE_AGENT_ICON', 'STUN_ICON', 'BLOOD_ICON'],
+      ranks: [{
+        id: 1,
+        icon: 'RANK_LEADER_ICON'
+      }, {
+        id: 2,
+        icon: 'RANK_SIDEKICK_ICON'
+      }, {
+        id: 3,
+        icon: 'RANK_FREE_AGENT_ICON'
+      }, {
+        id: 4,
+        icon: 'RANK_HENCHMAN_ICON'
+      }],
+      damage: [{
+        id: 1,
+        icon: 'BLOOD_ICON'
+      }, {
+        id: 2,
+        icon: 'STUN_ICON'
+      }]
     };
   },
   computed: {
@@ -6484,7 +6510,6 @@ __webpack_require__.r(__webpack_exports__);
           for (var i = 0; i < _this.affiliations.length; i++) {
             var existingAffiliation = _this.affiliations[i];
             if (existingAffiliation.id === affiliation.affiliation_id) {
-              console.log(existingAffiliation);
               affiliations.push(existingAffiliation);
             }
           }
@@ -6502,7 +6527,6 @@ __webpack_require__.r(__webpack_exports__);
           for (var i = 0; i < _this2.affiliations.length; i++) {
             var existingAffiliation = _this2.affiliations[i];
             if (existingAffiliation.id === affiliation) {
-              console.log(existingAffiliation);
               affiliations.push(existingAffiliation);
             }
           }
@@ -6512,7 +6536,6 @@ __webpack_require__.r(__webpack_exports__);
     },
     characterTraits: function characterTraits() {
       var _this3 = this;
-      console.log(this.character.traits);
       if (!this.character.traits || this.character.traits.length === 0) {
         return [];
       } else {
@@ -6525,7 +6548,131 @@ __webpack_require__.r(__webpack_exports__);
             }
           }
         });
-        return traits;
+        return traits.sort(function (trait1, trait2) {
+          return trait1.name.localeCompare(trait2.name);
+        });
+      }
+    },
+    characterEquipment: function characterEquipment() {
+      var _this4 = this;
+      if (!this.character.equipment || this.character.equipment.length === 0) {
+        return [];
+      } else {
+        var equipment = [];
+        this.character.equipment.forEach(function (equipmentObject) {
+          for (var i = 0; i < _this4.equipment.length; i++) {
+            var existingEquipment = _this4.equipment[i];
+            if (existingEquipment.id === equipmentObject.equipment_id) {
+              equipment.push(existingEquipment);
+            }
+          }
+        });
+        return equipment;
+      }
+    },
+    characterUpgrades: function characterUpgrades() {
+      var _this5 = this;
+      if (!this.character.upgrade_ids || this.character.upgrade_ids.length === 0) {
+        return [];
+      } else {
+        var upgrades = [];
+        this.character.upgrade_ids.forEach(function (upgrade_id) {
+          for (var i = 0; i < _this5.upgrades.length; i++) {
+            var existingUpgrade = _this5.upgrades[i];
+            if (existingUpgrade.id === upgrade_id) {
+              upgrades.push(existingUpgrade);
+            }
+          }
+        });
+        return upgrades;
+      }
+    },
+    characterRanks: function characterRanks() {
+      var _this6 = this;
+      if (!this.character.rank_ids || this.character.rank_ids.length === 0) {
+        return [];
+      } else {
+        var ranks = [];
+        this.character.rank_ids.forEach(function (rank_id) {
+          for (var i = 0; i < _this6.ranks.length; i++) {
+            var existingRank = _this6.ranks[i];
+            if (existingRank.id === rank_id) {
+              ranks.push(existingRank);
+            }
+          }
+        });
+        return ranks;
+      }
+    },
+    characterWeapons: function characterWeapons() {
+      var _this7 = this;
+      if (!this.character.weapon_ids || this.character.weapon_ids.length === 0) {
+        return [];
+      } else {
+        var weapons = [];
+        this.character.weapon_ids.forEach(function (weapon_id) {
+          for (var i = 0; i < _this7.weapons.length; i++) {
+            var existingWeapon = _this7.weapons[i];
+            if (existingWeapon.id === weapon_id) {
+              weapons.push(existingWeapon);
+            }
+          }
+        });
+        return weapons;
+      }
+    },
+    characterWeaponsWithTraitNames: function characterWeaponsWithTraitNames() {
+      var _this8 = this;
+      if (!this.characterWeapons || this.characterWeapons.length === 0) {
+        return [];
+      } else {
+        var characterWeapons = _toConsumableArray(this.characterWeapons);
+        var _loop = function _loop() {
+          var traits = [];
+          var characterWeapon = characterWeapons[i];
+          characterWeapon.traits.forEach(function (trait) {
+            for (var _i = 0; _i < _this8.traits.length; _i++) {
+              var existingTrait = _this8.traits[_i];
+              if (existingTrait.id === trait.trait_id && traits.findIndex(function (traitObject) {
+                return traitObject.id === trait.trait_id;
+              }) === -1) {
+                traits.push(existingTrait);
+              }
+            }
+          });
+          characterWeapons[i].trait_names = traits.sort(function (trait1, trait2) {
+            return trait1.name.localeCompare(trait2.name);
+          }).map(function (trait) {
+            return trait.name;
+          });
+        };
+        for (var i = 0; i < characterWeapons.length; i++) {
+          _loop();
+        }
+        return characterWeapons;
+      }
+    },
+    characterWeaponTraits: function characterWeaponTraits() {
+      var _this9 = this;
+      if (!this.characterWeapons || this.characterWeapons.length === 0) {
+        return [];
+      } else {
+        var traits = [];
+        this.characterWeapons.forEach(function (characterWeapon) {
+          characterWeapon.traits.forEach(function (trait) {
+            for (var i = 0; i < _this9.traits.length; i++) {
+              var existingTrait = _this9.traits[i];
+              if (existingTrait.id === trait.trait_id && traits.findIndex(function (traitObject) {
+                return traitObject.id === trait.trait_id;
+              }) === -1) {
+                traits.push(existingTrait);
+              }
+            }
+          });
+        });
+        return traits.sort(function (trait1, trait2) {
+          return trait1.name.localeCompare(trait2.name);
+        });
       }
     }
   },
@@ -6537,6 +6684,25 @@ __webpack_require__.r(__webpack_exports__);
         }
       });
       return text;
+    },
+    weaponDamage: function weaponDamage(weapon) {
+      var _this10 = this;
+      if (!weapon.damage || weapon.damage.length === 0) {
+        return [];
+      } else {
+        var damages = [];
+        weapon.damage.forEach(function (damage) {
+          var damageTypeIndex = _this10.damage.findIndex(function (damageType) {
+            return damageType.id === damage.damage_type_id;
+          });
+          if (damageTypeIndex !== -1) {
+            for (var i = 0; i < damage.count; i++) {
+              damages.push(_this10.damage[damageTypeIndex]);
+            }
+          }
+        });
+        return damages;
+      }
     }
   },
   mounted: function mounted() {
@@ -6582,6 +6748,13 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
         return this.game_data.affiliations;
       }
     },
+    characters: function characters() {
+      if (!this.game_data || !this.game_data.characters) {
+        return [];
+      } else {
+        return this.game_data.characters;
+      }
+    },
     traits: function traits() {
       if (!this.game_data || !this.game_data.traits) {
         return [];
@@ -6601,6 +6774,13 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
         return [];
       } else {
         return this.game_data.upgrades;
+      }
+    },
+    weapons: function weapons() {
+      if (!this.game_data || !this.game_data.weapons) {
+        return [];
+      } else {
+        return this.game_data.weapons;
       }
     }
   },
@@ -6637,6 +6817,7 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
               _this.version = currentVersion;
               _this.loaded = true;
               _this.game_data = gameData;
+              _this.loadCurrentCharacters();
             } else {
               _this.error = true;
             }
@@ -6649,6 +6830,8 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
               _gameData = JSON.parse(gameDataString);
               _this.loaded = true;
               _this.game_data = _gameData;
+              console.log(_gameData);
+              _this.loadCurrentCharacters();
             } else {
               _this.error = true;
             }
@@ -6686,6 +6869,7 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
     addCharacter: function addCharacter(result) {
       if (!this.characters_to_print.includes(result.id)) {
         this.characters_to_print.push(result);
+        this.addToSaveData(result);
       }
     },
     removeCharacter: function removeCharacter(character) {
@@ -6693,7 +6877,53 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
         return characterObject.id === character.id;
       });
       if (existingCharacter !== -1) {
-        this.characters_to_print.splice(existingCharacter);
+        this.characters_to_print.splice(existingCharacter, 1);
+        this.removeFromSaveData(character);
+      }
+    },
+    loadCurrentCharacters: function loadCurrentCharacters() {
+      var _this2 = this;
+      var previousContent = window.localStorage.getItem('characters');
+      if (previousContent && this.characters && this.characters.length) {
+        var previousContentIds = JSON.parse(previousContent);
+        if (previousContentIds && previousContentIds) {
+          previousContentIds.forEach(function (previousContentId) {
+            var existingCharacter = _this2.characters.findIndex(function (characterObject) {
+              return characterObject.id === previousContentId;
+            });
+            if (existingCharacter !== -1) {
+              _this2.addCharacter(_this2.characters[existingCharacter]);
+            }
+          });
+        }
+      }
+    },
+    getSaveData: function getSaveData() {
+      var previousContent = window.localStorage.getItem('characters');
+      if (previousContent) {
+        return JSON.parse(previousContent);
+      } else {
+        return [];
+      }
+    },
+    addToSaveData: function addToSaveData(character) {
+      var saveData = this.getSaveData();
+      var existingCharacter = saveData.findIndex(function (characterId) {
+        return characterId === character.id;
+      });
+      if (existingCharacter === -1) {
+        saveData.push(character.id);
+        window.localStorage.setItem('characters', JSON.stringify(saveData));
+      }
+    },
+    removeFromSaveData: function removeFromSaveData(character) {
+      var saveData = this.getSaveData();
+      var existingCharacter = saveData.findIndex(function (characterId) {
+        return characterId === character.id;
+      });
+      if (existingCharacter !== -1) {
+        saveData.splice(existingCharacter, 1);
+        window.localStorage.setItem('characters', JSON.stringify(saveData));
       }
     }
   }
@@ -6718,6 +6948,8 @@ var render = function render() {
     _c = _vm._self._c;
   return _c("div", {
     staticClass: "character"
+  }, [_c("div", {
+    staticClass: "flex flex-col character__card__container"
   }, [_c("a", {
     staticClass: "character__card",
     style: _vm.backgroundStyle,
@@ -6734,7 +6966,21 @@ var render = function render() {
     staticClass: "character__card__banner"
   }, [_c("div", {
     staticClass: "character__card__banner__name"
-  }, [_c("h4", [_vm._v(_vm._s(_vm.character.alias))]), _vm._v(" "), _c("h5", [_vm._v(_vm._s(_vm.character.name) + " / " + _vm._s(_vm.character.bases_size))])]), _vm._v(" "), _vm._m(0), _vm._v(" "), _c("div", {
+  }, [_c("h4", [_vm._v(_vm._s(_vm.character.alias))]), _vm._v(" "), _c("h5", [_vm._v(_vm._s(_vm.character.name) + " / " + _vm._s(_vm.character.bases_size))])]), _vm._v(" "), _c("div", {
+    staticClass: "character__card__banner__pod"
+  }, [_c("small", {
+    staticClass: "character__card__banner__pod__title"
+  }, [_vm._v("Rank")]), _vm._v(" "), _c("div", {
+    staticClass: "character__card__banner__pod__images"
+  }, _vm._l(_vm.characterRanks, function (rank) {
+    return _c("img", {
+      key: rank.id,
+      attrs: {
+        alt: rank.icon,
+        src: "/dist/img/icons/" + rank.icon + ".png"
+      }
+    });
+  }), 0)]), _vm._v(" "), _c("div", {
     staticClass: "character__card__banner__pod"
   }, [_c("small", {
     staticClass: "character__card__banner__pod__title"
@@ -6763,12 +7009,103 @@ var render = function render() {
       }
     });
   }), 0)]), _vm._v(" "), _c("div", {
-    staticClass: "character__card__banner__pod character__card__banner__pod--col"
+    staticClass: "character__card__banner__pod character__card__banner__pod--col character__card__banner__pod--center"
   }, [_c("span", {
     staticClass: "character__card__banner__pod__text"
   }, [_vm._v(_vm._s(_vm.character.reputation) + " rep")]), _vm._v(" "), _c("span", {
     staticClass: "character__card__banner__pod__text"
-  }, [_vm._v(_vm._s(_vm.character.funding) + " $")])])])]), _vm._v(" "), _c("a", {
+  }, [_vm._v(_vm._s(_vm.character.funding) + " $")])])]), _vm._v(" "), _c("div", {
+    staticClass: "character__card__stats"
+  }, [_c("div", {
+    staticClass: "character__card__stats__damage"
+  }, [_c("div", {
+    staticClass: "character__card__stats__damage__pod"
+  }, [_c("h3", [_vm._v(_vm._s(_vm.character.willpower))]), _vm._v(" "), _c("h4", [_vm._v("Willpower")])]), _vm._v(" "), _c("div", {
+    staticClass: "character__card__stats__damage__pod character__card__stats__damage__pod--dark"
+  }, [_c("h3", [_vm._v(_vm._s(_vm.character.endurance))]), _vm._v(" "), _c("h4", [_vm._v("Endurance")])])]), _vm._v(" "), _c("div", {
+    staticClass: "character__card__stats__row character__card__stats__row--1"
+  }, [_c("div", {
+    staticClass: "character__card__stats__row__pod"
+  }, [_c("img", {
+    attrs: {
+      src: "/dist/img/icons/SPECIAL_ICON.png",
+      alt: "special icon"
+    }
+  }), _vm._v(" "), _c("span", [_vm._v(_vm._s(_vm.character.attack))])]), _vm._v(" "), _c("div", {
+    staticClass: "character__card__stats__row__pod"
+  }, [_c("img", {
+    attrs: {
+      src: "/dist/img/icons/SPECIAL_ICON.png",
+      alt: "special icon"
+    }
+  }), _vm._v(" "), _c("span", [_vm._v(_vm._s(_vm.character.defense))])])]), _vm._v(" "), _c("div", {
+    staticClass: "character__card__stats__row character__card__stats__row--2"
+  }, [_c("div", {
+    staticClass: "character__card__stats__row__pod"
+  }, [_c("img", {
+    attrs: {
+      src: "/dist/img/icons/SPECIAL_ICON.png",
+      alt: "special icon"
+    }
+  }), _vm._v(" "), _c("span", [_vm._v(_vm._s(_vm.character.strength) + "+")])]), _vm._v(" "), _c("div", {
+    staticClass: "character__card__stats__row__pod"
+  }, [_c("img", {
+    attrs: {
+      src: "/dist/img/icons/SPECIAL_ICON.png",
+      alt: "special icon"
+    }
+  }), _vm._v(" "), _c("span", [_vm._v(_vm._s(_vm.character.movement))])]), _vm._v(" "), _c("div", {
+    staticClass: "character__card__stats__row__pod"
+  }, [_c("img", {
+    attrs: {
+      src: "/dist/img/icons/SPECIAL_ICON.png",
+      alt: "special icon"
+    }
+  }), _vm._v(" "), _c("span", [_vm._v(_vm._s(_vm.character.special))])])])]), _vm._v(" "), _c("div", {
+    staticClass: "character__card__middle__banner"
+  }, _vm._l(_vm.characterWeaponsWithTraitNames, function (weapon) {
+    return _c("div", {
+      key: weapon.id,
+      staticClass: "character__card__middle__banner__row"
+    }, [_c("span", {
+      staticClass: "character__card__middle__banner__row__tag character__card__middle__banner__row__title"
+    }, [_vm._v(_vm._s(weapon.name))]), _vm._v(" "), _c("span", {
+      staticClass: "character__card__middle__banner__row__tag character__card__middle__banner__row__damage"
+    }, [weapon.damage ? _vm._l(_vm.weaponDamage(weapon), function (damage, index) {
+      return _c("img", {
+        key: index,
+        attrs: {
+          alt: damage.icon,
+          src: "/dist/img/icons/" + damage.icon + ".png"
+        }
+      });
+    }) : [_vm._v("-")]], 2), _vm._v(" "), _c("span", {
+      staticClass: "character__card__middle__banner__row__tag character__card__middle__banner__row__rof"
+    }, [weapon.rate_of_fire ? [_vm._v("\n              " + _vm._s(weapon.rate_of_fire) + " "), _c("img", {
+      attrs: {
+        src: "/dist/img/icons/SPECIAL_ICON.png",
+        alt: "ROF icon"
+      }
+    })] : [_vm._v("-")]], 2), _vm._v(" "), _c("span", {
+      staticClass: "character__card__middle__banner__row__tag character__card__middle__banner__row__ammo"
+    }, [weapon.ammunition ? [_vm._v("\n              " + _vm._s(weapon.ammunition) + " "), _c("img", {
+      attrs: {
+        src: "/dist/img/icons/SPECIAL_ICON.png",
+        alt: "Ammo icon"
+      }
+    })] : [_vm._v("-")]], 2), _vm._v(" "), _c("span", {
+      staticClass: "character__card__middle__banner__row__tag character__card__middle__banner__row__traits"
+    }, [_vm._v(_vm._s(weapon.trait_names.join(" / ")))])]);
+  }), 0), _vm._v(" "), _c("div", {
+    staticClass: "character__card__bottom__banner"
+  }, _vm._l(_vm.characterTraits, function (trait) {
+    return _c("span", {
+      staticClass: "character__card__bottom__banner__tag",
+      domProps: {
+        innerHTML: _vm._s(_vm.renderIcons(trait.name))
+      }
+    });
+  }), 0)])]), _vm._v(" "), _c("a", {
     staticClass: "character__card bg-white border border-black",
     attrs: {
       href: "#"
@@ -6782,7 +7119,31 @@ var render = function render() {
   }, _vm._l(_vm.characterTraits, function (trait) {
     return _c("p", {
       key: trait.id,
-      staticClass: "character__card__row"
+      "class": "character__card__row" + (_vm.characterTraits.length <= 5 ? " character__card__row--large" : "")
+    }, [_c("strong", {
+      domProps: {
+        innerHTML: _vm._s(_vm.renderIcons(trait.name))
+      }
+    }), _vm._v(": "), _c("span", {
+      domProps: {
+        innerHTML: _vm._s(_vm.renderIcons(trait.description))
+      }
+    })]);
+  }), 0), _vm._v(" "), _c("a", {
+    staticClass: "character__card bg-white border border-black",
+    attrs: {
+      href: "#"
+    },
+    on: {
+      click: function click($event) {
+        $event.preventDefault();
+        return _vm.$emit("click", _vm.character);
+      }
+    }
+  }, _vm._l(_vm.characterWeaponTraits, function (trait) {
+    return _c("p", {
+      key: trait.id,
+      staticClass: "character__card__row character__card__row--large"
     }, [_c("strong", {
       domProps: {
         innerHTML: _vm._s(_vm.renderIcons(trait.name))
@@ -6794,15 +7155,7 @@ var render = function render() {
     })]);
   }), 0)]);
 };
-var staticRenderFns = [function () {
-  var _vm = this,
-    _c = _vm._self._c;
-  return _c("div", {
-    staticClass: "character__card__banner__pod"
-  }, [_c("small", {
-    staticClass: "character__card__banner__pod__title"
-  }, [_vm._v("Rank")])]);
-}];
+var staticRenderFns = [];
 render._withStripped = true;
 
 
@@ -6827,7 +7180,11 @@ var render = function render() {
     staticClass: "character-generator"
   }, [_vm.error ? _c("p", {
     staticClass: "character-generator__error"
-  }, [_vm._v("\n    There was an error getting app data from Knight Models.\n  ")]) : _c("div", [!_vm.loaded ? _c("div", [_c("h2", [_vm._v("Loading...")])]) : _c("div", [_c("div", {
+  }, [_vm._v("\n    There was an error getting app data from Knight Models.\n  ")]) : _c("div", [!_vm.loaded ? _c("div", {
+    staticClass: "flex flex-col p-6"
+  }, [_c("h2", {
+    staticClass: "text-3xl"
+  }, [_vm._v("Loading...")])]) : _c("div", [_c("div", {
     staticClass: "flex flex-col noprint mb-20 p-6"
   }, [_c("h1", {
     staticClass: "text-4xl mb-4"
@@ -6853,7 +7210,10 @@ var render = function render() {
       attrs: {
         character: character,
         affiliations: _vm.affiliations,
-        traits: _vm.traits
+        traits: _vm.traits,
+        equipment: _vm.equipment,
+        upgrades: _vm.upgrades,
+        weapons: _vm.weapons
       },
       on: {
         click: _vm.removeCharacter
@@ -6975,7 +7335,7 @@ __webpack_require__.r(__webpack_exports__);
 
 var ___CSS_LOADER_EXPORT___ = _node_modules_css_loader_dist_runtime_api_js__WEBPACK_IMPORTED_MODULE_0___default()(function(i){return i[1]});
 // Module
-___CSS_LOADER_EXPORT___.push([module.id, "\n.character {\n  display: flex;\n  width: 100%;\n  flex-direction: row;\n  align-items: center;\n  justify-content: center;\n  height: 496px;\n}\n.character__card {\n  position: relative;\n\n    width: 693px;\n    height: 496px;\n}\n.character__card:last-child {\n  margin-left: 1.5rem;\n}\n.character__card__banner {\n  position: absolute;\n  display: flex;\n  width: 100%;\n  flex-direction: row;\n      top: 0;\n      height: 75px;\n}\n.character__card__banner__name {\n  width: 50%;\n  padding: 0.75rem;\n}\n.character__card__banner__name h4 {\n  font-size: 1.875rem;\n  line-height: 2.25rem;\n}\n.character__card__banner__name h5 {\n  font-size: 1.125rem;\n  line-height: 1.75rem;\n}\n.character__card__banner__pod {\n        width: 12.5%;\n        display: flex;\n        flex-direction: row;\n        align-items: flex-start;\n        padding: 0.75rem;\n}\n.character__card__banner__pod__images {\n  display: flex;\n  width: 100%;\n  flex-direction: column;\n  align-items: flex-end;\n}\n.character__card__banner__pod__images img {\n            filter: invert(100%);\n            width: 35px;\n            height: auto;\n}\n.character__card__banner__pod--col {\n  flex-direction: column;\n}\n.character__card__banner__pod:not(:last-child) {\n  border-right-width: 1px;\n  --tw-border-opacity: 1;\n  border-color: rgb(253 224 71 / var(--tw-border-opacity));\n}\n.character__card__banner__pod__title {\n  display: inline-block;\n  --tw-rotate: -90deg;\n  transform: translate(var(--tw-translate-x), var(--tw-translate-y)) rotate(var(--tw-rotate)) skewX(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y));\n  text-align: right;\n  font-size: 1rem;\n  line-height: 1.5rem;\n  text-transform: uppercase;\n}\n.character__card__banner__pod__text {\n  font-size: 1.5rem;\n  line-height: 2rem;\n}\n.character__card__row {\n  padding: 0.25rem;\n  font-family: Open Sans, sans-serif;\n  font-size: 0.75rem;\n  line-height: 1rem;\n}\n.character__card__row img {\n        filter: invert(100%);\n        width: 20px;\n        display: inline;\n        height: auto;\n}\n@media print {\n.character {\n}\n}\n", ""]);
+___CSS_LOADER_EXPORT___.push([module.id, "\n.character {\n\n    display: flex;\n\n    width: 100%;\n\n    flex-direction: row;\n\n    flex-wrap: wrap;\n\n    align-items: flex-start;\n\n    justify-content: flex-start;\n}\n.character__card {\n\n    position: relative;\n\n    margin-bottom: 1.5rem;\n\n    margin-left: 1.5rem;\n\n    width: 693px;\n    height: 496px;\n}\n.character__card__container {\n      width: 693px;\n      margin-left: 1.5rem;\n}\n.character__card__container .character__card {\n\n    margin-left: 0px;\n}\n.character__card__stats {\n\n    position: absolute;\n\n    right: 0.75rem;\n\n    display: flex;\n\n    flex-direction: column;\n      top: 85px;\n      height: 230px;\n      width: 330px;\n}\n.character__card__stats__damage {\n\n    margin-bottom: 1.5rem;\n\n    display: flex;\n\n    flex-direction: row;\n\n    align-items: center;\n\n    justify-content: center;\n\n    align-self: flex-end;\n        width: 300px;\n        margin-top: 20px;\n}\n.character__card__stats__damage__pod {\n\n    position: relative;\n\n    display: flex;\n\n    flex-direction: column;\n}\n.character__card__stats__damage__pod:first-child {\n            margin-right: 110px;\n}\n.character__card__stats__damage__pod h3 {\n\n    align-self: center;\n\n    --tw-bg-opacity: 1;\n\n    background-color: rgb(253 224 71 / var(--tw-bg-opacity));\n\n    font-size: 4.5rem;\n\n    line-height: 1;\n\n    --tw-text-opacity: 1;\n\n    color: rgb(0 0 0 / var(--tw-text-opacity));\n            height: 60px;\n}\n.character__card__stats__damage__pod h4 {\n\n    position: absolute;\n\n    display: inline-block;\n\n    width: 100%;\n\n    --tw-rotate: -90deg;\n\n    transform: translate(var(--tw-translate-x), var(--tw-translate-y)) rotate(var(--tw-rotate)) skewX(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y));\n\n    --tw-bg-opacity: 1;\n\n    background-color: rgb(253 224 71 / var(--tw-bg-opacity));\n\n    text-align: center;\n\n    font-size: 1.25rem;\n\n    line-height: 1.75rem;\n\n    text-transform: uppercase;\n\n    line-height: 1;\n\n    --tw-text-opacity: 1;\n\n    color: rgb(0 0 0 / var(--tw-text-opacity));\n            transform-origin: 0 0;\n            top: 68px;\n            left: calc(100% + 2px);\n            height: 18px;\n            width: 75px;\n}\n.character__card__stats__damage__pod--dark h3 {\n\n    --tw-bg-opacity: 1;\n\n    background-color: rgb(0 0 0 / var(--tw-bg-opacity));\n\n    --tw-text-opacity: 1;\n\n    color: rgb(253 224 71 / var(--tw-text-opacity));\n}\n.character__card__stats__damage__pod--dark h4 {\n\n    --tw-bg-opacity: 1;\n\n    background-color: rgb(0 0 0 / var(--tw-bg-opacity));\n\n    --tw-text-opacity: 1;\n\n    color: rgb(250 204 21 / var(--tw-text-opacity));\n}\n.character__card__stats__row {\n\n    margin-left: auto;\n\n    margin-right: auto;\n\n    margin-bottom: 1.5rem;\n\n    display: flex;\n\n    flex-direction: row;\n\n    align-items: center;\n\n    justify-content: space-between;\n\n    align-self: flex-end;\n}\n.character__card__stats__row--1 {\n          width: 200px;\n}\n.character__card__stats__row--2 {\n          width: 300px;\n}\n.character__card__stats__row__pod {\n\n    position: relative;\n\n    display: flex;\n\n    flex-shrink: 0;\n\n    flex-grow: 0;\n\n    flex-direction: row;\n\n    align-items: center;\n\n    justify-content: flex-start;\n\n    --tw-bg-opacity: 1;\n\n    background-color: rgb(253 224 71 / var(--tw-bg-opacity));\n\n    --tw-text-opacity: 1;\n\n    color: rgb(0 0 0 / var(--tw-text-opacity));\n          width: 90px;\n}\n.character__card__stats__row__pod img {\n\n    position: absolute;\n\n    left: 0px;\n\n    display: block;\n\n    width: 3rem;\n\n    flex-shrink: 0;\n\n    flex-grow: 0;\n            top: -5px;\n            filter: invert(100%);\n            height: 50px;\n            -o-object-fit: contain;\n               object-fit: contain;\n}\n.character__card__stats__row__pod span {\n\n    margin-left: 3.5rem;\n\n    font-size: 2.25rem;\n\n    line-height: 2.5rem;\n\n    --tw-text-opacity: 1;\n\n    color: rgb(0 0 0 / var(--tw-text-opacity));\n}\n.character__card__bottom__banner {\n\n    position: absolute;\n\n    bottom: 0px;\n\n    display: flex;\n\n    width: 100%;\n\n    flex-direction: column;\n\n    flex-wrap: wrap;\n\n    overflow-x: auto;\n\n    --tw-bg-opacity: 1;\n\n    background-color: rgb(253 224 71 / var(--tw-bg-opacity));\n\n    padding: 0.25rem;\n      height: 75px;\n}\n.character__card__bottom__banner__tag {\n\n    display: block;\n\n    width: 100%;\n\n    font-size: 1rem;\n\n    line-height: 1.5rem;\n\n    line-height: 1;\n\n    --tw-text-opacity: 1;\n\n    color: rgb(0 0 0 / var(--tw-text-opacity));\n        max-width: 25%;\n        margin-bottom: 1px;\n}\n.character__card__bottom__banner__tag img {\n\n    display: inline;\n\n    width: auto;\n          filter: invert(100%);\n          height: 10px;\n}\n.character__card__middle__banner {\n\n    position: absolute;\n\n    left: 0px;\n\n    display: flex;\n\n    width: 100%;\n\n    flex-direction: column;\n      bottom: 74px;\n}\n.character__card__middle__banner__row {\n\n    margin-bottom: 0.25rem;\n\n    display: flex;\n\n    flex-direction: row;\n\n    align-items: flex-start;\n\n    justify-content: space-between;\n\n    padding-left: 0.75rem;\n\n    padding-right: 0.75rem;\n        background-color: rgba(0, 0, 0, 0.7);\n        height: 30px;\n}\n.character__card__middle__banner__row__tag {\n\n    height: 100%;\n\n    flex-shrink: 0;\n\n    flex-grow: 0;\n\n    font-size: 1.125rem;\n\n    line-height: 1.75rem;\n\n    --tw-text-opacity: 1;\n\n    color: rgb(253 224 71 / var(--tw-text-opacity));\n}\n.character__card__middle__banner__row__title {\n\n    display: block;\n\n    overflow: hidden;\n\n    text-overflow: ellipsis;\n\n    white-space: nowrap;\n          max-width: 120px;\n         width:20%;\n}\n.character__card__middle__banner__row__damage {\n          width: 15%;\n          display: inline-flex;\n          align-items: center;\n          justify-content: flex-start;\n}\n.character__card__middle__banner__row__damage img {\n\n    display: inline;\n            height: 20px;\n            width: 20px;\n            -o-object-fit: contain;\n               object-fit: contain;\n            filter: brightness(0) saturate(100%) invert(85%) sepia(27%) saturate(1037%) hue-rotate(353deg) brightness(104%) contrast(98%);\n}\n.character__card__middle__banner__row__damage img:not(:last-child) {\n              margin-right: 3px;\n}\n.character__card__middle__banner__row__ammo {\n          width: 5%;\n          display: inline-flex;\n          align-items: center;\n          justify-content: flex-start;\n}\n.character__card__middle__banner__row__ammo img {\n\n    margin-left: 0.25rem;\n\n    display: inline;\n\n    width: auto;\n            height: 20px;\n            width: 20px;\n            -o-object-fit: contain;\n               object-fit: contain;\n            filter: brightness(0) saturate(100%) invert(85%) sepia(27%) saturate(1037%) hue-rotate(353deg) brightness(104%) contrast(98%);\n}\n.character__card__middle__banner__row__rof {\n          width: 5%;\n          display: inline-flex;\n          align-items: center;\n          justify-content: flex-start;\n}\n.character__card__middle__banner__row__rof img {\n\n    display: inline;\n\n    width: auto;\n            height: 20px;\n            width: 20px;\n            -o-object-fit: contain;\n               object-fit: contain;\n            filter: brightness(0) saturate(100%) invert(85%) sepia(27%) saturate(1037%) hue-rotate(353deg) brightness(104%) contrast(98%);\n}\n.character__card__middle__banner__row__traits {\n          width: 55%;\n          text-align: right;\n}\n.character__card__banner {\n\n    position: absolute;\n\n    top: 0px;\n\n    display: flex;\n\n    width: 100%;\n\n    flex-direction: row;\n      height: 75px;\n}\n.character__card__banner__name {\n\n    width: 50%;\n\n    padding: 0.75rem;\n}\n.character__card__banner__name h4 {\n\n    margin-bottom: 0.5rem;\n\n    font-size: 1.875rem;\n\n    line-height: 2.25rem;\n\n    line-height: 1;\n}\n.character__card__banner__name h5 {\n\n    font-size: 1.125rem;\n\n    line-height: 1.75rem;\n\n    line-height: 1;\n}\n.character__card__banner__pod {\n        width: 12.5%;\n        position: relative;\n        display: flex;\n        flex-direction: row;\n        align-items: flex-start;\n        padding: 0.5rem;\n}\n.character__card__banner__pod__images {\n\n    display: flex;\n\n    width: 100%;\n\n    flex-shrink: 0;\n\n    flex-grow: 1;\n\n    flex-direction: row;\n\n    flex-wrap: wrap;\n\n    align-items: flex-end;\n          margin-left: 15px;\n}\n.character__card__banner__pod__images img {\n            filter: invert(100%);\n            margin-bottom: 0.25rem;\n            height: auto;\n            width: 50%;\n}\n.character__card__banner__pod--col {\n\n    flex-direction: column;\n}\n.character__card__banner__pod--center {\n\n    align-items: center;\n}\n.character__card__banner__pod:not(:last-child) {\n\n    border-right-width: 1px;\n\n    --tw-border-opacity: 1;\n\n    border-color: rgb(253 224 71 / var(--tw-border-opacity));\n}\n.character__card__banner__pod__title {\n\n    position: absolute;\n\n    display: inline-block;\n\n    height: 100%;\n\n    --tw-rotate: -90deg;\n\n    transform: translate(var(--tw-translate-x), var(--tw-translate-y)) rotate(var(--tw-rotate)) skewX(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y));\n\n    text-align: right;\n\n    font-size: 1rem;\n\n    line-height: 1.5rem;\n\n    text-transform: uppercase;\n\n    line-height: 1;\n          width: 70px;\n          top: 0.5rem;\n          left: 0.5rem;\n}\n.character__card__banner__pod__text {\n\n    font-size: 1.5rem;\n\n    line-height: 2rem;\n\n    line-height: 1;\n}\n.character__card__banner__pod__text:not(:last-child) {\n\n    margin-bottom: 0.25rem;\n}\n.character__card__row {\n\n    margin-bottom: 0.25rem;\n\n    padding-left: 0.25rem;\n\n    padding-right: 0.25rem;\n\n    font-family: Open Sans, sans-serif;\n\n    line-height: 1;\n}\n.character__card__row strong, .character__card__row span {\n\n    font-size: 0.75rem;\n\n    line-height: 1rem;\n}\n.character__card__row--large strong, .character__card__row--large span {\n\n    font-size: 1rem;\n\n    line-height: 1.5rem;\n}\n.character__card__row:first-child {\n\n    margin-top: 0.25rem;\n}\n.character__card__row img {\n        filter: invert(100%);\n        width: 20px;\n        height: 12px;\n        -o-object-fit: contain;\n           object-fit: contain;\n        display: inline;\n        height: auto;\n}\n@media print {\n.character {\n}\n}\n", ""]);
 // Exports
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (___CSS_LOADER_EXPORT___);
 

@@ -1,5 +1,18 @@
+.printonly {
+    @apply hidden;
+}
+
 @media print {
     .noprint {
         @apply hidden;
+    }
+
+    .printonly {
+        @apply block;
+    }
+
+    .printbreak {
+        page-break-after: always;
+        break-after: page;
     }
 }
