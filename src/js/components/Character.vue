@@ -85,13 +85,13 @@
             </span>
             <span class="character__card__middle__banner__row__tag character__card__middle__banner__row__rof">
               <template v-if="weapon.rate_of_fire">
-                <span>{{weapon.rate_of_fire}}&nbsp;</span><img src="/dist/img/icons/rof_icon.svg" alt="ROF icon"/>
+                <span>{{weapon.rate_of_fire}}&nbsp;</span><img src="/dist/img/icons/yellow_rof_icon.svg" alt="ROF icon"/>
               </template>
               <template v-else><span>-</span></template>
             </span>
             <span class="character__card__middle__banner__row__tag character__card__middle__banner__row__ammo">
               <template v-if="weapon.ammunition">
-                <span>{{weapon.ammunition}}&nbsp;</span><img src="/dist/img/icons/ammo_icon.svg" alt="Ammo icon"/>
+                <span>{{weapon.ammunition}}&nbsp;</span><img src="/dist/img/icons/yellow_ammo_icon.svg" alt="Ammo icon"/>
               </template>
               <template v-else><span>-</span></template>
             </span>
@@ -789,9 +789,7 @@ export default {
             @apply inline;
             height: 30px;
             width: 20px;
-            object-fit: contain;
-            -webkit-filter: brightness(0) saturate(100%) invert(85%) sepia(27%) saturate(1037%) hue-rotate(353deg) brightness(104%) contrast(98%);
-            filter: brightness(0) saturate(100%) invert(85%) sepia(27%) saturate(1037%) hue-rotate(353deg) brightness(104%) contrast(98%);
+            object-fit: cover;
 
             &:not(:last-child) {
               margin-right: 3px;
@@ -808,8 +806,6 @@ export default {
             height: 30px;
             width: 20px;
             object-fit: cover;
-            -webkit-filter: brightness(0) saturate(100%) invert(85%) sepia(27%) saturate(1037%) hue-rotate(353deg) brightness(104%) contrast(98%);
-            filter: brightness(0) saturate(100%) invert(85%) sepia(27%) saturate(1037%) hue-rotate(353deg) brightness(104%) contrast(98%);
           }
         }
 
@@ -822,8 +818,6 @@ export default {
             height: 30px;
             width: 20px;
             object-fit: cover;
-            -webkit-filter: brightness(0) saturate(100%) invert(85%) sepia(27%) saturate(1037%) hue-rotate(353deg) brightness(104%) contrast(98%);
-            filter: brightness(0) saturate(100%) invert(85%) sepia(27%) saturate(1037%) hue-rotate(353deg) brightness(104%) contrast(98%);
           }
         }
 
@@ -842,7 +836,7 @@ export default {
         @apply w-1/2 p-3;
 
         h4 {
-          @apply text-3xl leading-none mb-2;
+          @apply text-2xl leading-none mb-2;
         }
 
         h5 {
@@ -866,8 +860,8 @@ export default {
             object-fit: contain;
 
             &.character__card__banner__pod__image--dark {
-              -webkit-filter: invert(100%);
-              filter: invert(100%);
+              @apply bg-black rounded;
+              margin-right: 5px;
             }
           }
 
@@ -878,8 +872,8 @@ export default {
             background-size: 40px;
 
             &.character__card__banner__pod__image--dark {
-              -webkit-filter: invert(100%);
-              filter: invert(100%);
+              @apply bg-black rounded;
+              margin-right: 5px;
             }
           }
         }
