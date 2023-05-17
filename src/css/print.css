@@ -3,16 +3,44 @@
 }
 
 @media print {
+    main#app {
+        @apply block !important;
+    }
+
+    .character {
+        display: block !important;
+        break-inside: avoid;
+
+        &:not(:first-child) {
+            .character__card__container {
+                break-before: page !important;
+            }
+        }
+    }
+
+    .character__card__container {
+        break-inside: avoid;
+        display: block !important;
+    }
+
+    .character__card {
+        break-inside: avoid;
+        display: block !important;
+    }
+
     .noprint {
-        @apply hidden;
+        @apply hidden !important;
     }
 
     .printonly {
-        @apply block;
+        @apply block !important;
     }
 
-    .printbreak {
-        page-break-after: always;
-        break-after: page;
+    .avoidbreak {
+        break-inside: avoid;
+    }
+
+    .printblock {
+        @apply block !important;
     }
 }

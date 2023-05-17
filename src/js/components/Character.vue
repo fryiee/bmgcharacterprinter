@@ -1,7 +1,9 @@
 <template>
   <div class="character">
+
     <div class="flex flex-col character__card__container">
       <a href="#" @click.prevent="$emit('click', character)" class="character__card" :style="backgroundStyle">
+        <span class="character__card__version">{{version}}&nbsp;&copy;{{nowYear}} Knight Models.</span>
         <div class="character__card__banner">
           <div class="character__card__banner__name">
             <h4>{{character.alias}}</h4>
@@ -10,19 +12,19 @@
           <div class="character__card__banner__pod">
             <small class="character__card__banner__pod__title">Rank</small>
             <div class="character__card__banner__pod__images">
-              <img v-for="rank in characterRanks" :key="rank.id" :alt="rank.icon" :src="'/dist/img/icons/' + rank.icon + '.png'"/>
+              <img v-for="rank in characterRanks" :key="rank.id" :alt="rank.icon" :src="'/dist/img/icons/' + rank.icon + '.svg'"/>
             </div>
           </div>
           <div class="character__card__banner__pod">
             <small class="character__card__banner__pod__title">Aff</small>
             <div class="character__card__banner__pod__images">
-              <img v-if="affiliation.is_team === false" v-for="affiliation in characterAffiliations" :key="affiliation.id" :alt="affiliation.name" :src="affiliation.icon"/>
+              <div v-if="affiliation.is_team === false" v-for="affiliation in characterAffiliations" :key="affiliation.id" class="character__card__banner__pod__image--dark img" :style="'background-image:url('+affiliation.icon+');'"></div>
             </div>
           </div>
           <div class="character__card__banner__pod">
             <small class="character__card__banner__pod__title">Riv</small>
             <div class="character__card__banner__pod__images">
-              <img v-for="affiliation in characterRivals" :key="affiliation.id" :alt="affiliation.name" :src="affiliation.icon"/>
+              <div v-for="affiliation in characterRivals" :key="affiliation.id" class="character__card__banner__pod__image--dark img" :style="'background-image:url('+affiliation.icon+');'"></div>
             </div>
           </div>
           <div class="character__card__banner__pod character__card__banner__pod--col character__card__banner__pod--center">
@@ -34,11 +36,13 @@
         <div class="character__card__stats">
           <div class="character__card__stats__damage">
             <div class="character__card__stats__damage__pod">
+              <img src="/dist/img/icons/background_willpower.svg" alt="background_willpower icon" class="character__card__stats__damage__pod__image"/>
               <h3>{{character.willpower}}</h3>
               <h4>Willpower</h4>
             </div>
 
             <div class="character__card__stats__damage__pod character__card__stats__damage__pod--dark">
+              <img src="/dist/img/icons/background_endurance.png" alt="background_endurance icon" class="character__card__stats__damage__pod__image"/>
               <h3>{{character.endurance}}</h3>
               <h4>Endurance</h4>
             </div>
@@ -46,25 +50,25 @@
 
           <div class="character__card__stats__row character__card__stats__row--1">
             <div class="character__card__stats__row__pod">
-              <img src="/dist/img/icons/SPECIAL_ICON.png" alt="special icon"/>
+              <img src="/dist/img/icons/background_attack.svg" alt="background_attack icon"/>
               <span>{{character.attack}}</span>
             </div>
             <div class="character__card__stats__row__pod">
-              <img src="/dist/img/icons/SPECIAL_ICON.png" alt="special icon"/>
+              <img src="/dist/img/icons/background_defense.svg" alt="background_defense icon"/>
               <span>{{character.defense}}</span>
             </div>
           </div>
           <div class="character__card__stats__row character__card__stats__row--2">
             <div class="character__card__stats__row__pod">
-              <img src="/dist/img/icons/SPECIAL_ICON.png" alt="special icon"/>
+              <img src="/dist/img/icons/background_strength.svg" alt="strength icon"/>
               <span>{{character.strength}}+</span>
             </div>
             <div class="character__card__stats__row__pod">
-              <img src="/dist/img/icons/SPECIAL_ICON.png" alt="special icon"/>
+              <img src="/dist/img/icons/background_movement.svg" alt="movement icon"/>
               <span>{{character.movement}}</span>
             </div>
             <div class="character__card__stats__row__pod">
-              <img src="/dist/img/icons/SPECIAL_ICON.png" alt="special icon"/>
+              <img src="/dist/img/icons/background_special.svg" alt="special icon"/>
               <span>{{character.special}}</span>
             </div>
           </div>
@@ -75,21 +79,21 @@
             <span class="character__card__middle__banner__row__tag character__card__middle__banner__row__title">{{weapon.name}}</span>
             <span class="character__card__middle__banner__row__tag character__card__middle__banner__row__damage">
               <template v-if="weapon.damage">
-              <img v-for="(damage, index) in weaponDamage(weapon)" :key="index" :alt="damage.icon" :src="'/dist/img/icons/' + damage.icon + '.png'"/>
+              <img v-for="(damage, index) in weaponDamage(weapon)" :key="index" :alt="damage.icon" :src="'/dist/img/icons/' + damage.icon + '.svg'"/>
               </template>
               <template v-else>-</template>
             </span>
             <span class="character__card__middle__banner__row__tag character__card__middle__banner__row__rof">
               <template v-if="weapon.rate_of_fire">
-                {{weapon.rate_of_fire}}&nbsp;<img src="/dist/img/icons/SPECIAL_ICON.png" alt="ROF icon"/>
+                <span>{{weapon.rate_of_fire}}&nbsp;</span><img src="/dist/img/icons/rof_icon.svg" alt="ROF icon"/>
               </template>
-              <template v-else>-</template>
+              <template v-else><span>-</span></template>
             </span>
             <span class="character__card__middle__banner__row__tag character__card__middle__banner__row__ammo">
               <template v-if="weapon.ammunition">
-                {{weapon.ammunition}}&nbsp;<img src="/dist/img/icons/SPECIAL_ICON.png" alt="Ammo icon"/>
+                <span>{{weapon.ammunition}}&nbsp;</span><img src="/dist/img/icons/ammo_icon.svg" alt="Ammo icon"/>
               </template>
-              <template v-else>-</template>
+              <template v-else><span>-</span></template>
             </span>
             <span class="character__card__middle__banner__row__tag character__card__middle__banner__row__traits">{{weapon.trait_names.join(' / ')}}</span>
           </div>
@@ -100,14 +104,27 @@
         </div>
       </a>
     </div>
+    <div class="character__card bg-white border border-black noprint">
+      <div class="character__options">
+        <h4 class="text-2xl mb-2">Equipment</h4>
+        <span v-for="equipment in availableEquipment">
+          <input type="checkbox" :value="equipment.id" @input="toggleEquipment(equipment.id)"/>&nbsp;{{equipment.name}}
+        </span>
+      </div>
+    </div>
     <a href="#" @click.prevent="$emit('click', character)" class="character__card bg-white border border-black">
       <p :class="'character__card__row'+(characterTraits.length <= 5 ? ' character__card__row--large' : '')" :key="trait.id" v-for="trait in characterTraits">
-        <strong v-html="renderIcons(trait.name)"></strong>:&nbsp;<span v-html="renderIcons(trait.description)"></span>
+        <span class="font-sans" v-html="renderIcons(trait.name)"></span>:&nbsp;<span v-html="renderIcons(trait.description)"></span>
       </p>
     </a>
-    <a href="#" @click.prevent="$emit('click', character)" class="character__card bg-white border border-black">
+    <a v-if="characterWeaponTraits && characterWeaponTraits.length" href="#" @click.prevent="$emit('click', character)" class="character__card bg-white border border-black">
       <p class="character__card__row character__card__row--large" :key="trait.id" v-for="trait in characterWeaponTraits">
-        <strong v-html="renderIcons(trait.name)"></strong>:&nbsp;<span v-html="renderIcons(trait.description)"></span>
+        <span class="font-sans" v-html="renderIcons(trait.name)"></span>:&nbsp;<span v-html="renderIcons(trait.description)"></span>
+      </p>
+    </a>
+    <a v-if="characterEquipment && characterEquipment.length && showEquipmentCard === 1" href="#" @click.prevent="$emit('click', character)" class="character__card bg-white border border-black">
+      <p class="character__card__row character__card__row--large" :key="equipment.id" v-for="equipment in characterEquipment">
+        <span class="font-sans" v-html="renderIcons(equipment.name)"></span>:&nbsp;<span v-html="renderIcons(equipment.description)"></span>
       </p>
     </a>
   </div>
@@ -116,51 +133,163 @@
 <script>
 export default {
   name: 'Character',
-  props: ['character', 'affiliations', 'traits', 'equipment', 'upgrades', 'weapons'],
+  props: ['character', 'affiliations', 'traits', 'equipment', 'upgrades', 'weapons', 'crew', 'version', 'eternal', 'showEquipmentCard'],
   data() {
     return {
       icons: [
-          'SPECIAL_ICON',
-          'RANK_HENCHMAN_ICON',
-          'RANK_SIDEKICK_ICON',
-          'RANK_LEADER_ICON',
-          'RANK_FREE_AGENT_ICON',
-          'STUN_ICON',
-          'BLOOD_ICON'
+        'aff_amazons_icon',
+        'aff_bane_icon',
+        'aff_batman_icon',
+        'aff_birds_icon',
+        'aff_ccv_icon',
+        'aff_crime_icon',
+        'aff_joker_icon',
+        'aff_league_icon',
+        'aff_militia_icon',
+        'aff_mrfreeze_icon',
+        'aff_owls_icon',
+        'aff_penguin_icon',
+        'aff_poison_icon',
+        'aff_riddler_icon',
+        'aff_twoface_icon',
+        'aff_unknown_icon',
+        'ammo_icon',
+        'audacity_0_icon',
+        'audacity_1_icon',
+        'background_attack',
+        'background_defense',
+        'background_endurance',
+        'background_movement',
+        'background_special',
+        'background_strength',
+        'background_willpower',
+        'batclaw_icon',
+        'blood_icon',
+        'blood',
+        'card',
+        'clock_black_24dp',
+        'eff_blind_icon',
+        'eff_cooled_icon',
+        'eff_enerv1_icon',
+        'eff_enerv2_icon',
+        'eff_enerv3_icon',
+        'eff_fire_icon',
+        'eff_freeze_icon',
+        'eff_paralize_icon',
+        'eff_poison1_icon',
+        'eff_poison2_icon',
+        'eff_poison3_icon',
+        'eff_poison4_icon',
+        'eff_scared_icon',
+        'eff_stunned_icon',
+        'eff_terror1_icon',
+        'eff_terror2_icon',
+        'eff_terror3_icon',
+        'event_icon',
+        'faith_icon',
+        'grey_form',
+        'injury',
+        'interrog_icon',
+        'kd_icon',
+        'keyboard_black_24dp',
+        'ko_icon',
+        'less_att_icon',
+        'less_def_icon',
+        'login_icon',
+        'magazine_icon',
+        'mov_2_icon',
+        'mov_4_icon',
+        'mov_6_icon',
+        'mov_minus_2_icon',
+        'mov_minus_4_icon',
+        'mov_minus_6_icon',
+        'mtrl_checked_circle',
+        'mtrl_chip_checked_black',
+        'mtrl_chip_checked_circle',
+        'mtrl_chip_close_circle',
+        'none_icon',
+        'ot_control_icon',
+        'ot_menace_icon',
+        'ot_protection_icon',
+        'ot_violence_icon',
+        'phase_i_icon',
+        'phase_ii_icon',
+        'phase_iii_icon',
+        'phase_iv_icon',
+        'plus_att_icon',
+        'plus_def_icon',
+        'rank_freeagent',
+        'rank_henchman',
+        'rank_leader',
+        'rank_legend',
+        'rank_sidekick',
+        'rank_vehicle',
+        'rank_freeagent_icon',
+        'rank_henchman_icon',
+        'rank_leader_icon',
+        'rank_legend_icon',
+        'rank_sidekick_icon',
+        'rank_vehicle_icon',
+        'resource_icon',
+        'rof_icon',
+        'special_icon',
+        'strength_icon',
+        'stun',
+        'stun_icon',
+        'target_icon',
+        'tick_icon',
+        'wing_icon',
+        'wts_instant_icon',
+        'wts_round_icon',
+        'wts_special_icon',
+        'yellow_polygon',
+        'yellow_separator',
       ],
       ranks: [
         {
           id: 1,
-          icon: 'RANK_LEADER_ICON'
+          icon: 'rank_leader'
         },
         {
           id: 2,
-          icon: 'RANK_SIDEKICK_ICON'
+          icon: 'rank_sidekick'
         },
         {
           id: 3,
-          icon: 'RANK_FREE_AGENT_ICON'
+          icon: 'rank_freeagent'
+        },
+        {
+          id: 5,
+          icon: 'rank_henchman'
         },
         {
           id: 4,
-          icon: 'RANK_HENCHMAN_ICON'
-        }
+          icon: 'rank_vehicle'
+        },
+        {
+          id: 6,
+          icon: 'rank_legend'
+        },
       ],
       damage: [
         {
           id: 1,
-          icon: 'BLOOD_ICON'
+          icon: 'blood'
         },
         {
           id: 2,
-          icon: 'STUN_ICON'
+          icon: 'stun'
         }
-      ]
+      ],
+      selectedEquipment: []
     }
   },
   computed: {
     backgroundStyle() {
       return 'background-image:url("' + this.character.background + '");'
+    },
+    nowYear () {
+      return (new Date()).getUTCFullYear().toString()
     },
     characterAffiliations() {
       if (!this.character.affiliations || this.character.affiliations.length === 0) {
@@ -210,9 +339,29 @@ export default {
           for (let i = 0; i < this.traits.length; i++) {
             let existingTrait = this.traits[i]
 
-            if (existingTrait.id === trait.trait_id) {
+            if (existingTrait.id === trait.trait_id && (traits.findIndex(previousTrait => previousTrait.id === trait.trait_id) === -1)) {
+              if (trait.alternate_name !== null) {
+                existingTrait.name = trait.alternate_name
+              }
               traits.push(existingTrait)
             }
+          }
+        })
+
+        this.characterEquipment.forEach((equipment) => {
+          if (equipment.traits.length) {
+            equipment.traits.forEach((trait) => {
+              for (let i = 0; i < this.traits.length; i++) {
+                let existingTrait = this.traits[i]
+
+                if (existingTrait.id === trait.trait_id && (traits.findIndex(previousTrait => previousTrait.id === trait.trait_id) === -1)) {
+                  if (trait.alternate_name !== null) {
+                    existingTrait.name = trait.alternate_name
+                  }
+                  traits.push(existingTrait)
+                }
+              }
+            })
           }
         })
 
@@ -221,17 +370,79 @@ export default {
         })
       }
     },
+    availableEquipment() {
+      if (!this.equipment || this.equipment.length === 0) {
+        return []
+      } else {
+        const availableEquipment = []
+
+        this.equipment.forEach((equipment) => {
+          let canAdd = true
+
+          // check banned characters
+          if (equipment.banned_character_ids.includes(this.character.id)) {
+            canAdd = false
+          }
+
+          // check required affiliations
+          if (equipment.required_affiliation_ids.length) {
+            let isCrew = false
+
+            if (equipment.required_affiliation_ids.includes(this.crew.id)) {
+              isCrew = true
+            }
+
+            if (!isCrew) {
+              canAdd = false
+            }
+          }
+
+          // check required ranks
+          if (equipment.required_rank_ids.length) {
+            let inRank = false
+            this.character.rank_ids.forEach((rankId) => {
+              if (equipment.required_rank_ids.includes(rankId)) {
+                inRank = true
+              }
+            })
+
+            if (!inRank) {
+              canAdd = false
+            }
+          }
+
+          // check required character ids
+          if (equipment.required_character_ids.length) {
+            let isCharacter = false
+
+            if (equipment.required_character_ids.includes(this.character.id)) {
+              isCharacter = true
+            }
+
+            if (!isCharacter) {
+              canAdd = false
+            }
+          }
+
+          if (canAdd) {
+            availableEquipment.push(equipment)
+          }
+        })
+
+        return availableEquipment.sort((equip1, equip2) => equip1.name.localeCompare(equip2.name))
+      }
+    },
     characterEquipment() {
-      if (!this.character.equipment || this.character.equipment.length === 0) {
+      if (!this.selectedEquipment || this.selectedEquipment.length === 0) {
         return []
       } else {
         const equipment = []
 
-        this.character.equipment.forEach((equipmentObject) => {
+        this.selectedEquipment.forEach((selectedEquipment) => {
           for (let i = 0; i < this.equipment.length; i++) {
             let existingEquipment = this.equipment[i]
 
-            if (existingEquipment.id === equipmentObject.equipment_id) {
+            if (existingEquipment.id === selectedEquipment.id) {
               equipment.push(existingEquipment)
             }
           }
@@ -294,6 +505,18 @@ export default {
           }
         })
 
+        this.characterEquipment.forEach((equipment) => {
+          if (equipment.granted_weapon_id) {
+            for (let i = 0; i < this.weapons.length; i++) {
+              let existingWeapon = this.weapons[i]
+
+              if (existingWeapon.id === equipment.granted_weapon_id) {
+                weapons.push(existingWeapon)
+              }
+            }
+          }
+        })
+
         return weapons
       }
     },
@@ -311,6 +534,9 @@ export default {
               let existingTrait = this.traits[i]
 
               if (existingTrait.id === trait.trait_id && (traits.findIndex(traitObject => traitObject.id === trait.trait_id) === -1)) {
+                if (trait.alternate_name !== null) {
+                  existingTrait.name = trait.alternate_name
+                }
                 traits.push(existingTrait)
               }
             }
@@ -338,6 +564,9 @@ export default {
               let existingTrait = this.traits[i]
 
               if (existingTrait.id === trait.trait_id && (traits.findIndex(traitObject => traitObject.id === trait.trait_id) === -1)) {
+                if (trait.alternate_name !== null) {
+                  existingTrait.name = trait.alternate_name
+                }
                 traits.push(existingTrait)
               }
             }
@@ -353,8 +582,9 @@ export default {
   methods: {
     renderIcons (text) {
       this.icons.forEach((icon) => {
-        if (text.includes('{' + icon + '}')) {
-          text = text.replaceAll('{' + icon + '}', '<img src="/dist/img/icons/' + icon + '.png" alt="' + icon + ' icon"/>')
+        const uppercaseIcon = icon.toUpperCase()
+        if (text.includes('{' + uppercaseIcon + '}')) {
+          text = text.replaceAll('{' + uppercaseIcon + '}', '<img src="/dist/img/icons/' + icon + '.svg" alt="' + icon + ' icon"/>')
         }
       })
 
@@ -378,10 +608,17 @@ export default {
 
         return damages
       }
+    },
+    toggleEquipment(equipmentId) {
+      const existingEquipmentId = this.selectedEquipment.findIndex(selectedEquipment => selectedEquipment.id === equipmentId)
+
+      if (existingEquipmentId !== -1) {
+        this.selectedEquipment.splice(existingEquipmentId, 1)
+      } else {
+        const equipmentIndex = this.equipment.findIndex(equipment => equipment.id === equipmentId)
+        this.selectedEquipment.push(this.equipment[equipmentIndex])
+      }
     }
-  },
-  mounted() {
-    console.log(this.character)
   }
 }
 </script>
@@ -390,11 +627,24 @@ export default {
 .character {
   @apply flex flex-row w-full items-start justify-start flex-wrap;
 
+  &__options {
+    @apply flex flex-col flex-wrap w-full h-full p-1;
+
+    span {
+      @apply w-1/3;
+    }
+  }
+
   &__card {
     @apply relative mb-6 ml-6;
 
     width: 693px;
     height: 496px;
+
+    &__version {
+      @apply absolute text-yellow-400 left-3 text-sm;
+      top: 85px;
+    }
 
     &__container {
       width: 693px;
@@ -412,35 +662,49 @@ export default {
       width: 330px;
 
       &__damage {
-        @apply flex flex-row items-center justify-center self-end mb-6;
+        @apply flex flex-row items-center justify-center self-end mb-3;
         width: 300px;
-        margin-top: 20px;
 
         &__pod {
-          @apply flex flex-col relative;
+          @apply flex flex-col relative items-center justify-center;
+          width: 125px;
+          height: 125px;
+
+          &__image {
+            @apply absolute w-full h-auto left-0;
+            top: 10px;
+          }
 
           &:first-child {
-            margin-right: 110px;
+            margin-right: 40px;
           }
 
           h3 {
-            @apply text-7xl text-black bg-yellow-300 leading-none self-center;
+            @apply text-7xl text-black leading-none self-center relative;
+            z-index: 2;
             height: 60px;
           }
 
           h4 {
-            @apply uppercase inline-block text-xl leading-none text-black bg-yellow-300 w-full transform -rotate-90 absolute text-center;
+            @apply uppercase inline-block leading-none text-black bg-yellow-400 w-full transform -rotate-90 absolute text-center;
+            font-size: 1.5rem;
             transform-origin: 0 0;
-            top: 68px;
-            left: calc(100% + 2px);
-            height: 18px;
-            width: 75px;
+            top: 110px;
+            left: 88px;
+            height: 22px;
+            width: 90px;
+            z-index: 2;
           }
 
           &--dark {
+            .character__card__stats__damage__pod__image {
+              top: 2px;
+              left: -7px;
+            }
 
             h3 {
-              @apply text-yellow-300 bg-black;
+              @apply text-yellow-400;
+              margin-left: -20px;
             }
 
             h4 {
@@ -451,7 +715,7 @@ export default {
       }
 
       &__row {
-        @apply flex flex-row items-center justify-between mb-6 self-end mx-auto;
+        @apply flex flex-row items-center justify-between mb-3 self-end mx-auto;
 
         &--1 {
           width: 200px;
@@ -462,26 +726,26 @@ export default {
         }
 
         &__pod {
-          @apply text-black bg-yellow-300 flex flex-row relative items-center justify-start flex-shrink-0 flex-grow-0;
+          @apply text-black flex flex-row relative items-center justify-start flex-shrink-0 flex-grow-0;
           width: 90px;
 
           img {
-            @apply block flex-shrink-0 flex-grow-0 w-12 absolute left-0;
-            top: -5px;
-            filter: invert(100%);
-            height: 50px;
-            object-fit: contain;
+            @apply block flex-shrink-0 flex-grow-0 absolute left-0 top-1/2;
+            width: 102px;
+            height: auto;
+            z-index: 1;
+            transform: translateY(-50%);
           }
 
           span {
-            @apply ml-14 text-4xl text-black;
+            @apply ml-14 text-4xl text-black relative z-5;
           }
         }
       }
     }
 
     &__bottom__banner {
-      @apply flex flex-col absolute w-full bottom-0 bg-yellow-300 flex-wrap p-1 overflow-x-auto;
+      @apply flex flex-col absolute w-full bottom-0 bg-yellow-400 flex-wrap pt-1 px-1 overflow-x-auto;
       height: 75px;
 
       &__tag {
@@ -491,28 +755,29 @@ export default {
 
         img {
           @apply w-auto inline;
-          filter: invert(100%);
+
           height: 10px;
         }
       }
     }
 
     &__middle__banner {
-      @apply flex flex-col absolute w-full left-0;
+      @apply flex flex-col absolute w-full left-0 z-5;
       bottom: 74px;
 
       &__row {
-        @apply flex flex-row mb-1 px-3 items-start justify-between;
+        @apply flex flex-row mb-1 px-3 items-center justify-between;
         background-color: rgba(0, 0, 0, 0.7);
         height: 30px;
 
         &__tag {
-          @apply text-lg text-yellow-300 flex-shrink-0 flex-grow-0 h-full;
+          @apply text-yellow-400 flex-shrink-0 flex-grow-0 h-auto leading-none;
+          font-size: 1.15rem;
         }
 
         &__title {
           @apply text-ellipsis whitespace-nowrap block overflow-hidden;
-          max-width: 120px;
+          max-width: 128px;
          width:20%;
         }
 
@@ -522,9 +787,10 @@ export default {
 
           img {
             @apply inline;
-            height: 20px;
+            height: 30px;
             width: 20px;
             object-fit: contain;
+            -webkit-filter: brightness(0) saturate(100%) invert(85%) sepia(27%) saturate(1037%) hue-rotate(353deg) brightness(104%) contrast(98%);
             filter: brightness(0) saturate(100%) invert(85%) sepia(27%) saturate(1037%) hue-rotate(353deg) brightness(104%) contrast(98%);
 
             &:not(:last-child) {
@@ -535,13 +801,14 @@ export default {
 
         &__ammo {
           width: 5%;
-          @apply inline-flex items-center justify-start;
+          @apply inline-flex items-center justify-start ml-1;
 
           img {
-            @apply inline w-auto ml-1;
-            height: 20px;
+            @apply inline w-auto;
+            height: 30px;
             width: 20px;
-            object-fit: contain;
+            object-fit: cover;
+            -webkit-filter: brightness(0) saturate(100%) invert(85%) sepia(27%) saturate(1037%) hue-rotate(353deg) brightness(104%) contrast(98%);
             filter: brightness(0) saturate(100%) invert(85%) sepia(27%) saturate(1037%) hue-rotate(353deg) brightness(104%) contrast(98%);
           }
         }
@@ -552,9 +819,10 @@ export default {
 
           img {
             @apply inline w-auto;
-            height: 20px;
+            height: 30px;
             width: 20px;
-            object-fit: contain;
+            object-fit: cover;
+            -webkit-filter: brightness(0) saturate(100%) invert(85%) sepia(27%) saturate(1037%) hue-rotate(353deg) brightness(104%) contrast(98%);
             filter: brightness(0) saturate(100%) invert(85%) sepia(27%) saturate(1037%) hue-rotate(353deg) brightness(104%) contrast(98%);
           }
         }
@@ -591,8 +859,28 @@ export default {
           margin-left: 15px;
 
           img {
-            filter: invert(100%);
-            @apply h-auto mb-1 w-1/2;
+
+            @apply mb-1;
+            width: 28px;
+            height: 28px;
+            object-fit: contain;
+
+            &.character__card__banner__pod__image--dark {
+              -webkit-filter: invert(100%);
+              filter: invert(100%);
+            }
+          }
+
+          .img {
+            @apply mb-1 bg-center bg-no-repeat;
+            width: 28px;
+            height: 28px;
+            background-size: 40px;
+
+            &.character__card__banner__pod__image--dark {
+              -webkit-filter: invert(100%);
+              filter: invert(100%);
+            }
           }
         }
 
@@ -605,7 +893,7 @@ export default {
         }
 
         &:not(:last-child) {
-          @apply border-r border-yellow-300;
+          @apply border-r border-yellow-400;
         }
 
         &__title {
@@ -628,12 +916,12 @@ export default {
     &__row {
       @apply font-serif px-1 mb-1 leading-none;
 
-      strong, span {
+      span {
         @apply text-xs;
       }
 
       &--large {
-        strong, span {
+        span {
           @apply text-base;
         }
       }
@@ -643,18 +931,13 @@ export default {
       }
 
       img {
-        filter: invert(100%);
+
         width: 20px;
         height: 12px;
         object-fit: contain;
         @apply h-auto inline;
       }
     }
-  }
-}
-
-@screen print {
-  .character {
   }
 }
 </style>

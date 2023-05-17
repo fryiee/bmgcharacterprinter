@@ -3,18 +3,47 @@
 }
 
 @media print {
+    main#app {
+        display: block !important;
+    }
+
+    .character {
+        display: block !important;
+        -moz-column-break-inside: avoid;
+             break-inside: avoid;
+    }
+            .character:not(:first-child) .character__card__container {
+                -moz-column-break-before: page !important;
+                     break-before: page !important;
+            }
+
+    .character__card__container {
+        -moz-column-break-inside: avoid;
+             break-inside: avoid;
+        display: block !important;
+    }
+
+    .character__card {
+        -moz-column-break-inside: avoid;
+             break-inside: avoid;
+        display: block !important;
+    }
+
     .noprint {
-        display: none;
+        display: none !important;
     }
 
     .printonly {
-        display: block;
+        display: block !important;
     }
 
-    .printbreak {
-        page-break-after: always;
-        -moz-column-break-after: page;
-             break-after: page;
+    .avoidbreak {
+        -moz-column-break-inside: avoid;
+             break-inside: avoid;
+    }
+
+    .printblock {
+        display: block !important;
     }
 }
 

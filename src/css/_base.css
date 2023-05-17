@@ -6,4 +6,8 @@
     main {
         @apply h-full w-full flex flex-col;
     }
+
+    .autocomplete {
+        @apply z-5;
+    }
 }

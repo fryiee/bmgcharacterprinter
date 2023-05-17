@@ -5,7 +5,11 @@ module.exports = {
             borderWidth: {
                 '5': '5px'
             },
-            colors: {},
+            colors: {
+                yellow: {
+                    '400': '#ffd400'
+                }
+            },
             height: {
                 'screen-1/10': '10vh',
                 'screen-1/8': '12.5vh',
@@ -54,6 +58,11 @@ module.exports = {
     content: [
         './index.html',
         './src/js/**/*.vue'
+    ],
+    safelist: [
+        'autocomplete',
+        'printblock',
+        'avoidbreak'
     ],
     future: {
         defaultLineHeights: true,

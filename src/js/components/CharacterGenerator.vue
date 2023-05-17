@@ -3,22 +3,32 @@
     <p v-if="error" class="character-generator__error">
       There was an error getting app data from Knight Models.
     </p>
-    <div v-else>
-      <div v-if="!loaded" class="flex flex-col p-6">
+    <template v-else>
+      <div v-if="!loaded" class="flex flex-col noprint p-6">
         <h2 class="text-3xl">Loading...</h2>
       </div>
-      <div v-else>
+      <template v-else>
         <div class="flex flex-col noprint mb-20 p-6">
           <h1 class="text-4xl mb-4">Batman Miniature Game Character Printer</h1>
-          <h2 class="font-serif text-2xl mb-8">Game Data Version: <strong class="font-sans">{{version}}</strong></h2>
-          <p class="font-serif text-xl mb-6">Search for characters below and click to add them to your print sheet. Click to remove them.</p>
-          <autocomplete :search="search" :get-result-value="getResultValue" @submit="addCharacter"></autocomplete>
+          <h2 v-if="version" class="font-serif text-2xl mb-3">Game Data Version: <strong class="font-sans">{{formattedVersion}} ({{version}})</strong></h2>
+          <h2 class="font-serif text-2xl mb-2">Eternal: <input type="checkbox" :value="eternal" :checked="eternal" @input="toggleEternal"/></h2>
+          <h2 class="font-serif text-2xl mb-3">Show separate equipment card? <input type="checkbox" :value="showEquipmentCard" :checked="showEquipmentCard" @input="toggleEquipmentCard"/></h2>
+          <p v-if="!crew" class="font-serif text-xl mb-6">Select your crew to populate equipment choices.</p>
+          <a href="#" @click.prevent="crewInputExpanded = !crewInputExpanded" v-if="crew">
+            <h3 class="font-serif text-2xl">Crew: <strong class="font-sans">{{crew.name}}</strong></h3>
+          </a>
+          <autocomplete v-if="!crew || crewInputExpanded" ref="crewAutocomplete" :search="searchCrews" :get-result-value="getCrewResultValue" @submit="selectCrew" class="mb-8"></autocomplete>
+          <div class="mt-10" v-if="crew">
+            <p class="font-serif text-xl mb-6">Search for characters below and click to add them to your print sheet. Click to remove them.</p>
+            <autocomplete :search="search" ref="characterAutocomplete" :get-result-value="getResultValue" @submit="addCharacter"></autocomplete>
+            <p class="mt-6 font-serif text-lg">Recommended print settings to match KM sized cards: <strong>A4 / Portrait / Scale: 50%</strong></p>
+          </div>
         </div>
         <div class="flex flex-col">
-          <character :character="character" v-for="character in characters_to_print" :key="character.id" :affiliations="affiliations" :traits="traits" :equipment="equipment" :upgrades="upgrades" :weapons="weapons" @click="removeCharacter"></character>
+          <character :character="character" v-for="character in characters_to_print" :key="character.id" :crew="crew" :version="formattedVersion" :affiliations="affiliations" :traits="traits" :equipment="equipment" :upgrades="upgrades" :weapons="weapons" :show-equipment-card="showEquipmentCard" @click="removeCharacter"></character>
         </div>
-      </div>
-    </div>
+      </template>
+    </template>
   </div>
 </template>
 
@@ -32,6 +42,10 @@ export default {
       error: false,
       game_data: null,
       version: null,
+      eternal: 0,
+      showEquipmentCard: 0,
+      crew: null,
+      crewInputExpanded: false,
       characters_to_print: []
     }
   },
@@ -40,14 +54,22 @@ export default {
       if (!this.game_data || !this.game_data.affiliations) {
         return []
       } else {
-        return this.game_data.affiliations
+        if (this.eternal) {
+          return this.game_data.affiliations
+        } else {
+          return this.game_data.affiliations.filter(affiliation => affiliation.eternal === false)
+        }
       }
     },
     characters() {
       if (!this.game_data || !this.game_data.characters) {
         return []
       } else {
-        return this.game_data.characters
+        if (this.eternal) {
+          return this.game_data.characters
+        } else {
+          return this.game_data.characters.filter(affiliation => affiliation.eternal === false)
+        }
       }
     },
     traits() {
@@ -77,6 +99,10 @@ export default {
       } else {
         return this.game_data.weapons
       }
+    },
+    formattedVersion() {
+      const date = new Date(parseInt(this.version) * 1000)
+      return 'v.' + date.getUTCFullYear().toString() + '-' + (date.getUTCMonth() + 1).toString().padStart(2, '0') + '-' + date.getUTCDate().toString().padStart(2, '0')
     }
   },
   async mounted() {
@@ -94,6 +120,9 @@ export default {
             this.version = currentVersion
             this.loaded = true
             this.game_data = gameData
+            this.loadCurrentCrew()
+            this.loadEternalToggle()
+            this.loadEquipmentCardToggle()
             this.loadCurrentCharacters()
           } else {
             this.error = true
@@ -105,7 +134,9 @@ export default {
             const gameData = JSON.parse(gameDataString)
             this.loaded = true
             this.game_data = gameData
-            console.log(gameData)
+            this.loadCurrentCrew()
+            this.loadEternalToggle()
+            this.loadEquipmentCardToggle()
             this.loadCurrentCharacters()
           } else {
             this.error = true
@@ -115,24 +146,39 @@ export default {
         this.error = true
       }
     } catch (e) {
+      console.log(e)
       this.error = true
     }
   },
   methods: {
     search(input) {
       if (input.length < 1) { return [] }
-      return this.game_data.characters.filter(character => {
+      return this.characters.filter(character => {
         return character.alias.toLowerCase()
+            .includes(input.toLowerCase()) || character.name.toLowerCase()
+            .includes(input.toLowerCase())
+      })
+    },
+    searchCrews(input) {
+      if (input.length < 1) { return [] }
+      return this.affiliations.filter(crew => {
+        return crew.name.toLowerCase()
             .includes(input.toLowerCase())
       })
     },
     getResultValue(result) {
-      return result.alias
+      return result.alias + ' [' + result.name + ']'
+    },
+    getCrewResultValue(result) {
+      return result.name
     },
     addCharacter (result) {
       if (!this.characters_to_print.includes(result.id)) {
         this.characters_to_print.push(result)
         this.addToSaveData(result)
+        if (this.$refs.characterAutocomplete) {
+          this.$refs.characterAutocomplete.value = ''
+        }
       }
     },
     removeCharacter (character) {
@@ -195,6 +241,44 @@ export default {
         saveData.splice(existingCharacter, 1)
         window.localStorage.setItem('characters', JSON.stringify(saveData))
       }
+    },
+    loadCurrentCrew () {
+      const previousContent = window.localStorage.getItem('crew')
+      if (previousContent && this.affiliations && this.affiliations.length) {
+        const previousContentId = parseInt(previousContent)
+        const existingCrew = this.affiliations.findIndex((crewObject) => {
+          return crewObject.id === previousContentId
+        })
+
+        if (existingCrew !== -1) {
+          this.crew = this.affiliations[existingCrew]
+        }
+      }
+    },
+    selectCrew (crew) {
+      this.crew = crew
+      window.localStorage.setItem('crew', crew.id)
+      this.characters_to_print.forEach((character) => {
+        this.removeCharacter(character)
+      })
+      this.crewInputExpanded = false
+      if (this.$refs.crewAutocomplete) {
+        this.$refs.crewAutocomplete.value = ''
+      }
+    },
+    loadEternalToggle() {
+      this.eternal = parseInt(window.localStorage.getItem('eternal'))
+    },
+    toggleEternal () {
+      this.eternal = this.eternal === 1 ? 0 : 1
+      window.localStorage.setItem('eternal', this.eternal)
+    },
+    loadEquipmentCardToggle() {
+      this.showEquipmentCard = parseInt(window.localStorage.getItem('showEquipmentCard'))
+    },
+    toggleEquipmentCard () {
+      this.showEquipmentCard = this.showEquipmentCard === 1 ? 0 : 1
+      window.localStorage.setItem('showEquipmentCard', this.showEquipmentCard)
     }
   }
 }

@@ -6470,35 +6470,45 @@ function _arrayWithoutHoles(arr) { if (Array.isArray(arr)) return _arrayLikeToAr
 function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len = arr.length; for (var i = 0, arr2 = new Array(len); i < len; i++) arr2[i] = arr[i]; return arr2; }
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
   name: 'Character',
-  props: ['character', 'affiliations', 'traits', 'equipment', 'upgrades', 'weapons'],
+  props: ['character', 'affiliations', 'traits', 'equipment', 'upgrades', 'weapons', 'crew', 'version', 'eternal', 'showEquipmentCard'],
   data: function data() {
     return {
-      icons: ['SPECIAL_ICON', 'RANK_HENCHMAN_ICON', 'RANK_SIDEKICK_ICON', 'RANK_LEADER_ICON', 'RANK_FREE_AGENT_ICON', 'STUN_ICON', 'BLOOD_ICON'],
+      icons: ['aff_amazons_icon', 'aff_bane_icon', 'aff_batman_icon', 'aff_birds_icon', 'aff_ccv_icon', 'aff_crime_icon', 'aff_joker_icon', 'aff_league_icon', 'aff_militia_icon', 'aff_mrfreeze_icon', 'aff_owls_icon', 'aff_penguin_icon', 'aff_poison_icon', 'aff_riddler_icon', 'aff_twoface_icon', 'aff_unknown_icon', 'ammo_icon', 'audacity_0_icon', 'audacity_1_icon', 'background_attack', 'background_defense', 'background_endurance', 'background_movement', 'background_special', 'background_strength', 'background_willpower', 'batclaw_icon', 'blood_icon', 'blood', 'card', 'clock_black_24dp', 'eff_blind_icon', 'eff_cooled_icon', 'eff_enerv1_icon', 'eff_enerv2_icon', 'eff_enerv3_icon', 'eff_fire_icon', 'eff_freeze_icon', 'eff_paralize_icon', 'eff_poison1_icon', 'eff_poison2_icon', 'eff_poison3_icon', 'eff_poison4_icon', 'eff_scared_icon', 'eff_stunned_icon', 'eff_terror1_icon', 'eff_terror2_icon', 'eff_terror3_icon', 'event_icon', 'faith_icon', 'grey_form', 'injury', 'interrog_icon', 'kd_icon', 'keyboard_black_24dp', 'ko_icon', 'less_att_icon', 'less_def_icon', 'login_icon', 'magazine_icon', 'mov_2_icon', 'mov_4_icon', 'mov_6_icon', 'mov_minus_2_icon', 'mov_minus_4_icon', 'mov_minus_6_icon', 'mtrl_checked_circle', 'mtrl_chip_checked_black', 'mtrl_chip_checked_circle', 'mtrl_chip_close_circle', 'none_icon', 'ot_control_icon', 'ot_menace_icon', 'ot_protection_icon', 'ot_violence_icon', 'phase_i_icon', 'phase_ii_icon', 'phase_iii_icon', 'phase_iv_icon', 'plus_att_icon', 'plus_def_icon', 'rank_freeagent', 'rank_henchman', 'rank_leader', 'rank_legend', 'rank_sidekick', 'rank_vehicle', 'rank_freeagent_icon', 'rank_henchman_icon', 'rank_leader_icon', 'rank_legend_icon', 'rank_sidekick_icon', 'rank_vehicle_icon', 'resource_icon', 'rof_icon', 'special_icon', 'strength_icon', 'stun', 'stun_icon', 'target_icon', 'tick_icon', 'wing_icon', 'wts_instant_icon', 'wts_round_icon', 'wts_special_icon', 'yellow_polygon', 'yellow_separator'],
       ranks: [{
         id: 1,
-        icon: 'RANK_LEADER_ICON'
+        icon: 'rank_leader'
       }, {
         id: 2,
-        icon: 'RANK_SIDEKICK_ICON'
+        icon: 'rank_sidekick'
       }, {
         id: 3,
-        icon: 'RANK_FREE_AGENT_ICON'
+        icon: 'rank_freeagent'
+      }, {
+        id: 5,
+        icon: 'rank_henchman'
       }, {
         id: 4,
-        icon: 'RANK_HENCHMAN_ICON'
+        icon: 'rank_vehicle'
+      }, {
+        id: 6,
+        icon: 'rank_legend'
       }],
       damage: [{
         id: 1,
-        icon: 'BLOOD_ICON'
+        icon: 'blood'
       }, {
         id: 2,
-        icon: 'STUN_ICON'
-      }]
+        icon: 'stun'
+      }],
+      selectedEquipment: []
     };
   },
   computed: {
     backgroundStyle: function backgroundStyle() {
       return 'background-image:url("' + this.character.background + '");';
+    },
+    nowYear: function nowYear() {
+      return new Date().getUTCFullYear().toString();
     },
     characterAffiliations: function characterAffiliations() {
       var _this = this;
@@ -6543,9 +6553,31 @@ function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len 
         this.character.traits.forEach(function (trait) {
           for (var i = 0; i < _this3.traits.length; i++) {
             var existingTrait = _this3.traits[i];
-            if (existingTrait.id === trait.trait_id) {
+            if (existingTrait.id === trait.trait_id && traits.findIndex(function (previousTrait) {
+              return previousTrait.id === trait.trait_id;
+            }) === -1) {
+              if (trait.alternate_name !== null) {
+                existingTrait.name = trait.alternate_name;
+              }
               traits.push(existingTrait);
             }
+          }
+        });
+        this.characterEquipment.forEach(function (equipment) {
+          if (equipment.traits.length) {
+            equipment.traits.forEach(function (trait) {
+              for (var i = 0; i < _this3.traits.length; i++) {
+                var existingTrait = _this3.traits[i];
+                if (existingTrait.id === trait.trait_id && traits.findIndex(function (previousTrait) {
+                  return previousTrait.id === trait.trait_id;
+                }) === -1) {
+                  if (trait.alternate_name !== null) {
+                    existingTrait.name = trait.alternate_name;
+                  }
+                  traits.push(existingTrait);
+                }
+              }
+            });
           }
         });
         return traits.sort(function (trait1, trait2) {
@@ -6553,16 +6585,73 @@ function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len 
         });
       }
     },
-    characterEquipment: function characterEquipment() {
+    availableEquipment: function availableEquipment() {
       var _this4 = this;
-      if (!this.character.equipment || this.character.equipment.length === 0) {
+      if (!this.equipment || this.equipment.length === 0) {
+        return [];
+      } else {
+        var availableEquipment = [];
+        this.equipment.forEach(function (equipment) {
+          var canAdd = true;
+
+          // check banned characters
+          if (equipment.banned_character_ids.includes(_this4.character.id)) {
+            canAdd = false;
+          }
+
+          // check required affiliations
+          if (equipment.required_affiliation_ids.length) {
+            var isCrew = false;
+            if (equipment.required_affiliation_ids.includes(_this4.crew.id)) {
+              isCrew = true;
+            }
+            if (!isCrew) {
+              canAdd = false;
+            }
+          }
+
+          // check required ranks
+          if (equipment.required_rank_ids.length) {
+            var inRank = false;
+            _this4.character.rank_ids.forEach(function (rankId) {
+              if (equipment.required_rank_ids.includes(rankId)) {
+                inRank = true;
+              }
+            });
+            if (!inRank) {
+              canAdd = false;
+            }
+          }
+
+          // check required character ids
+          if (equipment.required_character_ids.length) {
+            var isCharacter = false;
+            if (equipment.required_character_ids.includes(_this4.character.id)) {
+              isCharacter = true;
+            }
+            if (!isCharacter) {
+              canAdd = false;
+            }
+          }
+          if (canAdd) {
+            availableEquipment.push(equipment);
+          }
+        });
+        return availableEquipment.sort(function (equip1, equip2) {
+          return equip1.name.localeCompare(equip2.name);
+        });
+      }
+    },
+    characterEquipment: function characterEquipment() {
+      var _this5 = this;
+      if (!this.selectedEquipment || this.selectedEquipment.length === 0) {
         return [];
       } else {
         var equipment = [];
-        this.character.equipment.forEach(function (equipmentObject) {
-          for (var i = 0; i < _this4.equipment.length; i++) {
-            var existingEquipment = _this4.equipment[i];
-            if (existingEquipment.id === equipmentObject.equipment_id) {
+        this.selectedEquipment.forEach(function (selectedEquipment) {
+          for (var i = 0; i < _this5.equipment.length; i++) {
+            var existingEquipment = _this5.equipment[i];
+            if (existingEquipment.id === selectedEquipment.id) {
               equipment.push(existingEquipment);
             }
           }
@@ -6571,14 +6660,14 @@ function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len 
       }
     },
     characterUpgrades: function characterUpgrades() {
-      var _this5 = this;
+      var _this6 = this;
       if (!this.character.upgrade_ids || this.character.upgrade_ids.length === 0) {
         return [];
       } else {
         var upgrades = [];
         this.character.upgrade_ids.forEach(function (upgrade_id) {
-          for (var i = 0; i < _this5.upgrades.length; i++) {
-            var existingUpgrade = _this5.upgrades[i];
+          for (var i = 0; i < _this6.upgrades.length; i++) {
+            var existingUpgrade = _this6.upgrades[i];
             if (existingUpgrade.id === upgrade_id) {
               upgrades.push(existingUpgrade);
             }
@@ -6588,14 +6677,14 @@ function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len 
       }
     },
     characterRanks: function characterRanks() {
-      var _this6 = this;
+      var _this7 = this;
       if (!this.character.rank_ids || this.character.rank_ids.length === 0) {
         return [];
       } else {
         var ranks = [];
         this.character.rank_ids.forEach(function (rank_id) {
-          for (var i = 0; i < _this6.ranks.length; i++) {
-            var existingRank = _this6.ranks[i];
+          for (var i = 0; i < _this7.ranks.length; i++) {
+            var existingRank = _this7.ranks[i];
             if (existingRank.id === rank_id) {
               ranks.push(existingRank);
             }
@@ -6605,16 +6694,26 @@ function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len 
       }
     },
     characterWeapons: function characterWeapons() {
-      var _this7 = this;
+      var _this8 = this;
       if (!this.character.weapon_ids || this.character.weapon_ids.length === 0) {
         return [];
       } else {
         var weapons = [];
         this.character.weapon_ids.forEach(function (weapon_id) {
-          for (var i = 0; i < _this7.weapons.length; i++) {
-            var existingWeapon = _this7.weapons[i];
+          for (var i = 0; i < _this8.weapons.length; i++) {
+            var existingWeapon = _this8.weapons[i];
             if (existingWeapon.id === weapon_id) {
               weapons.push(existingWeapon);
+            }
+          }
+        });
+        this.characterEquipment.forEach(function (equipment) {
+          if (equipment.granted_weapon_id) {
+            for (var i = 0; i < _this8.weapons.length; i++) {
+              var existingWeapon = _this8.weapons[i];
+              if (existingWeapon.id === equipment.granted_weapon_id) {
+                weapons.push(existingWeapon);
+              }
             }
           }
         });
@@ -6622,7 +6721,7 @@ function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len 
       }
     },
     characterWeaponsWithTraitNames: function characterWeaponsWithTraitNames() {
-      var _this8 = this;
+      var _this9 = this;
       if (!this.characterWeapons || this.characterWeapons.length === 0) {
         return [];
       } else {
@@ -6631,11 +6730,14 @@ function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len 
           var traits = [];
           var characterWeapon = characterWeapons[i];
           characterWeapon.traits.forEach(function (trait) {
-            for (var _i = 0; _i < _this8.traits.length; _i++) {
-              var existingTrait = _this8.traits[_i];
+            for (var _i = 0; _i < _this9.traits.length; _i++) {
+              var existingTrait = _this9.traits[_i];
               if (existingTrait.id === trait.trait_id && traits.findIndex(function (traitObject) {
                 return traitObject.id === trait.trait_id;
               }) === -1) {
+                if (trait.alternate_name !== null) {
+                  existingTrait.name = trait.alternate_name;
+                }
                 traits.push(existingTrait);
               }
             }
@@ -6653,18 +6755,21 @@ function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len 
       }
     },
     characterWeaponTraits: function characterWeaponTraits() {
-      var _this9 = this;
+      var _this10 = this;
       if (!this.characterWeapons || this.characterWeapons.length === 0) {
         return [];
       } else {
         var traits = [];
         this.characterWeapons.forEach(function (characterWeapon) {
           characterWeapon.traits.forEach(function (trait) {
-            for (var i = 0; i < _this9.traits.length; i++) {
-              var existingTrait = _this9.traits[i];
+            for (var i = 0; i < _this10.traits.length; i++) {
+              var existingTrait = _this10.traits[i];
               if (existingTrait.id === trait.trait_id && traits.findIndex(function (traitObject) {
                 return traitObject.id === trait.trait_id;
               }) === -1) {
+                if (trait.alternate_name !== null) {
+                  existingTrait.name = trait.alternate_name;
+                }
                 traits.push(existingTrait);
               }
             }
@@ -6679,34 +6784,45 @@ function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len 
   methods: {
     renderIcons: function renderIcons(text) {
       this.icons.forEach(function (icon) {
-        if (text.includes('{' + icon + '}')) {
-          text = text.replaceAll('{' + icon + '}', '<img src="/dist/img/icons/' + icon + '.png" alt="' + icon + ' icon"/>');
+        var uppercaseIcon = icon.toUpperCase();
+        if (text.includes('{' + uppercaseIcon + '}')) {
+          text = text.replaceAll('{' + uppercaseIcon + '}', '<img src="/dist/img/icons/' + icon + '.svg" alt="' + icon + ' icon"/>');
         }
       });
       return text;
     },
     weaponDamage: function weaponDamage(weapon) {
-      var _this10 = this;
+      var _this11 = this;
       if (!weapon.damage || weapon.damage.length === 0) {
         return [];
       } else {
         var damages = [];
         weapon.damage.forEach(function (damage) {
-          var damageTypeIndex = _this10.damage.findIndex(function (damageType) {
+          var damageTypeIndex = _this11.damage.findIndex(function (damageType) {
             return damageType.id === damage.damage_type_id;
           });
           if (damageTypeIndex !== -1) {
             for (var i = 0; i < damage.count; i++) {
-              damages.push(_this10.damage[damageTypeIndex]);
+              damages.push(_this11.damage[damageTypeIndex]);
             }
           }
         });
         return damages;
       }
+    },
+    toggleEquipment: function toggleEquipment(equipmentId) {
+      var existingEquipmentId = this.selectedEquipment.findIndex(function (selectedEquipment) {
+        return selectedEquipment.id === equipmentId;
+      });
+      if (existingEquipmentId !== -1) {
+        this.selectedEquipment.splice(existingEquipmentId, 1);
+      } else {
+        var equipmentIndex = this.equipment.findIndex(function (equipment) {
+          return equipment.id === equipmentId;
+        });
+        this.selectedEquipment.push(this.equipment[equipmentIndex]);
+      }
     }
-  },
-  mounted: function mounted() {
-    console.log(this.character);
   }
 });
 
@@ -6737,6 +6853,10 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
       error: false,
       game_data: null,
       version: null,
+      eternal: 0,
+      showEquipmentCard: 0,
+      crew: null,
+      crewInputExpanded: false,
       characters_to_print: []
     };
   },
@@ -6745,14 +6865,26 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
       if (!this.game_data || !this.game_data.affiliations) {
         return [];
       } else {
-        return this.game_data.affiliations;
+        if (this.eternal) {
+          return this.game_data.affiliations;
+        } else {
+          return this.game_data.affiliations.filter(function (affiliation) {
+            return affiliation.eternal === false;
+          });
+        }
       }
     },
     characters: function characters() {
       if (!this.game_data || !this.game_data.characters) {
         return [];
       } else {
-        return this.game_data.characters;
+        if (this.eternal) {
+          return this.game_data.characters;
+        } else {
+          return this.game_data.characters.filter(function (affiliation) {
+            return affiliation.eternal === false;
+          });
+        }
       }
     },
     traits: function traits() {
@@ -6782,6 +6914,10 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
       } else {
         return this.game_data.weapons;
       }
+    },
+    formattedVersion: function formattedVersion() {
+      var date = new Date(parseInt(this.version) * 1000);
+      return 'v.' + date.getUTCFullYear().toString() + '-' + (date.getUTCMonth() + 1).toString().padStart(2, '0') + '-' + date.getUTCDate().toString().padStart(2, '0');
     }
   },
   mounted: function mounted() {
@@ -6817,6 +6953,9 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
               _this.version = currentVersion;
               _this.loaded = true;
               _this.game_data = gameData;
+              _this.loadCurrentCrew();
+              _this.loadEternalToggle();
+              _this.loadEquipmentCardToggle();
               _this.loadCurrentCharacters();
             } else {
               _this.error = true;
@@ -6830,7 +6969,9 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
               _gameData = JSON.parse(gameDataString);
               _this.loaded = true;
               _this.game_data = _gameData;
-              console.log(_gameData);
+              _this.loadCurrentCrew();
+              _this.loadEternalToggle();
+              _this.loadEquipmentCardToggle();
               _this.loadCurrentCharacters();
             } else {
               _this.error = true;
@@ -6841,13 +6982,14 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
           case 19:
             _this.error = true;
           case 20:
-            _context.next = 25;
+            _context.next = 26;
             break;
           case 22:
             _context.prev = 22;
             _context.t0 = _context["catch"](0);
+            console.log(_context.t0);
             _this.error = true;
-          case 25:
+          case 26:
           case "end":
             return _context.stop();
         }
@@ -6859,17 +7001,31 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
       if (input.length < 1) {
         return [];
       }
-      return this.game_data.characters.filter(function (character) {
-        return character.alias.toLowerCase().includes(input.toLowerCase());
+      return this.characters.filter(function (character) {
+        return character.alias.toLowerCase().includes(input.toLowerCase()) || character.name.toLowerCase().includes(input.toLowerCase());
+      });
+    },
+    searchCrews: function searchCrews(input) {
+      if (input.length < 1) {
+        return [];
+      }
+      return this.affiliations.filter(function (crew) {
+        return crew.name.toLowerCase().includes(input.toLowerCase());
       });
     },
     getResultValue: function getResultValue(result) {
-      return result.alias;
+      return result.alias + ' [' + result.name + ']';
+    },
+    getCrewResultValue: function getCrewResultValue(result) {
+      return result.name;
     },
     addCharacter: function addCharacter(result) {
       if (!this.characters_to_print.includes(result.id)) {
         this.characters_to_print.push(result);
         this.addToSaveData(result);
+        if (this.$refs.characterAutocomplete) {
+          this.$refs.characterAutocomplete.value = '';
+        }
       }
     },
     removeCharacter: function removeCharacter(character) {
@@ -6925,6 +7081,44 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
         saveData.splice(existingCharacter, 1);
         window.localStorage.setItem('characters', JSON.stringify(saveData));
       }
+    },
+    loadCurrentCrew: function loadCurrentCrew() {
+      var previousContent = window.localStorage.getItem('crew');
+      if (previousContent && this.affiliations && this.affiliations.length) {
+        var previousContentId = parseInt(previousContent);
+        var existingCrew = this.affiliations.findIndex(function (crewObject) {
+          return crewObject.id === previousContentId;
+        });
+        if (existingCrew !== -1) {
+          this.crew = this.affiliations[existingCrew];
+        }
+      }
+    },
+    selectCrew: function selectCrew(crew) {
+      var _this3 = this;
+      this.crew = crew;
+      window.localStorage.setItem('crew', crew.id);
+      this.characters_to_print.forEach(function (character) {
+        _this3.removeCharacter(character);
+      });
+      this.crewInputExpanded = false;
+      if (this.$refs.crewAutocomplete) {
+        this.$refs.crewAutocomplete.value = '';
+      }
+    },
+    loadEternalToggle: function loadEternalToggle() {
+      this.eternal = parseInt(window.localStorage.getItem('eternal'));
+    },
+    toggleEternal: function toggleEternal() {
+      this.eternal = this.eternal === 1 ? 0 : 1;
+      window.localStorage.setItem('eternal', this.eternal);
+    },
+    loadEquipmentCardToggle: function loadEquipmentCardToggle() {
+      this.showEquipmentCard = parseInt(window.localStorage.getItem('showEquipmentCard'));
+    },
+    toggleEquipmentCard: function toggleEquipmentCard() {
+      this.showEquipmentCard = this.showEquipmentCard === 1 ? 0 : 1;
+      window.localStorage.setItem('showEquipmentCard', this.showEquipmentCard);
     }
   }
 });
@@ -6962,7 +7156,9 @@ var render = function render() {
         return _vm.$emit("click", _vm.character);
       }
     }
-  }, [_c("div", {
+  }, [_c("span", {
+    staticClass: "character__card__version"
+  }, [_vm._v(_vm._s(_vm.version) + " ©" + _vm._s(_vm.nowYear) + " Knight Models.")]), _vm._v(" "), _c("div", {
     staticClass: "character__card__banner"
   }, [_c("div", {
     staticClass: "character__card__banner__name"
@@ -6977,7 +7173,7 @@ var render = function render() {
       key: rank.id,
       attrs: {
         alt: rank.icon,
-        src: "/dist/img/icons/" + rank.icon + ".png"
+        src: "/dist/img/icons/" + rank.icon + ".svg"
       }
     });
   }), 0)]), _vm._v(" "), _c("div", {
@@ -6987,12 +7183,10 @@ var render = function render() {
   }, [_vm._v("Aff")]), _vm._v(" "), _c("div", {
     staticClass: "character__card__banner__pod__images"
   }, _vm._l(_vm.characterAffiliations, function (affiliation) {
-    return affiliation.is_team === false ? _c("img", {
+    return affiliation.is_team === false ? _c("div", {
       key: affiliation.id,
-      attrs: {
-        alt: affiliation.name,
-        src: affiliation.icon
-      }
+      staticClass: "character__card__banner__pod__image--dark img",
+      style: "background-image:url(" + affiliation.icon + ");"
     }) : _vm._e();
   }), 0)]), _vm._v(" "), _c("div", {
     staticClass: "character__card__banner__pod"
@@ -7001,12 +7195,10 @@ var render = function render() {
   }, [_vm._v("Riv")]), _vm._v(" "), _c("div", {
     staticClass: "character__card__banner__pod__images"
   }, _vm._l(_vm.characterRivals, function (affiliation) {
-    return _c("img", {
+    return _c("div", {
       key: affiliation.id,
-      attrs: {
-        alt: affiliation.name,
-        src: affiliation.icon
-      }
+      staticClass: "character__card__banner__pod__image--dark img",
+      style: "background-image:url(" + affiliation.icon + ");"
     });
   }), 0)]), _vm._v(" "), _c("div", {
     staticClass: "character__card__banner__pod character__card__banner__pod--col character__card__banner__pod--center"
@@ -7020,23 +7212,35 @@ var render = function render() {
     staticClass: "character__card__stats__damage"
   }, [_c("div", {
     staticClass: "character__card__stats__damage__pod"
-  }, [_c("h3", [_vm._v(_vm._s(_vm.character.willpower))]), _vm._v(" "), _c("h4", [_vm._v("Willpower")])]), _vm._v(" "), _c("div", {
+  }, [_c("img", {
+    staticClass: "character__card__stats__damage__pod__image",
+    attrs: {
+      src: "/dist/img/icons/background_willpower.svg",
+      alt: "background_willpower icon"
+    }
+  }), _vm._v(" "), _c("h3", [_vm._v(_vm._s(_vm.character.willpower))]), _vm._v(" "), _c("h4", [_vm._v("Willpower")])]), _vm._v(" "), _c("div", {
     staticClass: "character__card__stats__damage__pod character__card__stats__damage__pod--dark"
-  }, [_c("h3", [_vm._v(_vm._s(_vm.character.endurance))]), _vm._v(" "), _c("h4", [_vm._v("Endurance")])])]), _vm._v(" "), _c("div", {
+  }, [_c("img", {
+    staticClass: "character__card__stats__damage__pod__image",
+    attrs: {
+      src: "/dist/img/icons/background_endurance.png",
+      alt: "background_endurance icon"
+    }
+  }), _vm._v(" "), _c("h3", [_vm._v(_vm._s(_vm.character.endurance))]), _vm._v(" "), _c("h4", [_vm._v("Endurance")])])]), _vm._v(" "), _c("div", {
     staticClass: "character__card__stats__row character__card__stats__row--1"
   }, [_c("div", {
     staticClass: "character__card__stats__row__pod"
   }, [_c("img", {
     attrs: {
-      src: "/dist/img/icons/SPECIAL_ICON.png",
-      alt: "special icon"
+      src: "/dist/img/icons/background_attack.svg",
+      alt: "background_attack icon"
     }
   }), _vm._v(" "), _c("span", [_vm._v(_vm._s(_vm.character.attack))])]), _vm._v(" "), _c("div", {
     staticClass: "character__card__stats__row__pod"
   }, [_c("img", {
     attrs: {
-      src: "/dist/img/icons/SPECIAL_ICON.png",
-      alt: "special icon"
+      src: "/dist/img/icons/background_defense.svg",
+      alt: "background_defense icon"
     }
   }), _vm._v(" "), _c("span", [_vm._v(_vm._s(_vm.character.defense))])])]), _vm._v(" "), _c("div", {
     staticClass: "character__card__stats__row character__card__stats__row--2"
@@ -7044,21 +7248,21 @@ var render = function render() {
     staticClass: "character__card__stats__row__pod"
   }, [_c("img", {
     attrs: {
-      src: "/dist/img/icons/SPECIAL_ICON.png",
-      alt: "special icon"
+      src: "/dist/img/icons/background_strength.svg",
+      alt: "strength icon"
     }
   }), _vm._v(" "), _c("span", [_vm._v(_vm._s(_vm.character.strength) + "+")])]), _vm._v(" "), _c("div", {
     staticClass: "character__card__stats__row__pod"
   }, [_c("img", {
     attrs: {
-      src: "/dist/img/icons/SPECIAL_ICON.png",
-      alt: "special icon"
+      src: "/dist/img/icons/background_movement.svg",
+      alt: "movement icon"
     }
   }), _vm._v(" "), _c("span", [_vm._v(_vm._s(_vm.character.movement))])]), _vm._v(" "), _c("div", {
     staticClass: "character__card__stats__row__pod"
   }, [_c("img", {
     attrs: {
-      src: "/dist/img/icons/SPECIAL_ICON.png",
+      src: "/dist/img/icons/background_special.svg",
       alt: "special icon"
     }
   }), _vm._v(" "), _c("span", [_vm._v(_vm._s(_vm.character.special))])])])]), _vm._v(" "), _c("div", {
@@ -7076,24 +7280,24 @@ var render = function render() {
         key: index,
         attrs: {
           alt: damage.icon,
-          src: "/dist/img/icons/" + damage.icon + ".png"
+          src: "/dist/img/icons/" + damage.icon + ".svg"
         }
       });
     }) : [_vm._v("-")]], 2), _vm._v(" "), _c("span", {
       staticClass: "character__card__middle__banner__row__tag character__card__middle__banner__row__rof"
-    }, [weapon.rate_of_fire ? [_vm._v("\n              " + _vm._s(weapon.rate_of_fire) + " "), _c("img", {
+    }, [weapon.rate_of_fire ? [_c("span", [_vm._v(_vm._s(weapon.rate_of_fire) + " ")]), _c("img", {
       attrs: {
-        src: "/dist/img/icons/SPECIAL_ICON.png",
+        src: "/dist/img/icons/rof_icon.svg",
         alt: "ROF icon"
       }
-    })] : [_vm._v("-")]], 2), _vm._v(" "), _c("span", {
+    })] : [_c("span", [_vm._v("-")])]], 2), _vm._v(" "), _c("span", {
       staticClass: "character__card__middle__banner__row__tag character__card__middle__banner__row__ammo"
-    }, [weapon.ammunition ? [_vm._v("\n              " + _vm._s(weapon.ammunition) + " "), _c("img", {
+    }, [weapon.ammunition ? [_c("span", [_vm._v(_vm._s(weapon.ammunition) + " ")]), _c("img", {
       attrs: {
-        src: "/dist/img/icons/SPECIAL_ICON.png",
+        src: "/dist/img/icons/ammo_icon.svg",
         alt: "Ammo icon"
       }
-    })] : [_vm._v("-")]], 2), _vm._v(" "), _c("span", {
+    })] : [_c("span", [_vm._v("-")])]], 2), _vm._v(" "), _c("span", {
       staticClass: "character__card__middle__banner__row__tag character__card__middle__banner__row__traits"
     }, [_vm._v(_vm._s(weapon.trait_names.join(" / ")))])]);
   }), 0), _vm._v(" "), _c("div", {
@@ -7105,7 +7309,27 @@ var render = function render() {
         innerHTML: _vm._s(_vm.renderIcons(trait.name))
       }
     });
-  }), 0)])]), _vm._v(" "), _c("a", {
+  }), 0)])]), _vm._v(" "), _c("div", {
+    staticClass: "character__card bg-white border border-black noprint"
+  }, [_c("div", {
+    staticClass: "character__options"
+  }, [_c("h4", {
+    staticClass: "text-2xl mb-2"
+  }, [_vm._v("Equipment")]), _vm._v(" "), _vm._l(_vm.availableEquipment, function (equipment) {
+    return _c("span", [_c("input", {
+      attrs: {
+        type: "checkbox"
+      },
+      domProps: {
+        value: equipment.id
+      },
+      on: {
+        input: function input($event) {
+          return _vm.toggleEquipment(equipment.id);
+        }
+      }
+    }), _vm._v(" " + _vm._s(equipment.name) + "\n      ")]);
+  })], 2)]), _vm._v(" "), _c("a", {
     staticClass: "character__card bg-white border border-black",
     attrs: {
       href: "#"
@@ -7120,7 +7344,8 @@ var render = function render() {
     return _c("p", {
       key: trait.id,
       "class": "character__card__row" + (_vm.characterTraits.length <= 5 ? " character__card__row--large" : "")
-    }, [_c("strong", {
+    }, [_c("span", {
+      staticClass: "font-sans",
       domProps: {
         innerHTML: _vm._s(_vm.renderIcons(trait.name))
       }
@@ -7129,7 +7354,7 @@ var render = function render() {
         innerHTML: _vm._s(_vm.renderIcons(trait.description))
       }
     })]);
-  }), 0), _vm._v(" "), _c("a", {
+  }), 0), _vm._v(" "), _vm.characterWeaponTraits && _vm.characterWeaponTraits.length ? _c("a", {
     staticClass: "character__card bg-white border border-black",
     attrs: {
       href: "#"
@@ -7144,7 +7369,8 @@ var render = function render() {
     return _c("p", {
       key: trait.id,
       staticClass: "character__card__row character__card__row--large"
-    }, [_c("strong", {
+    }, [_c("span", {
+      staticClass: "font-sans",
       domProps: {
         innerHTML: _vm._s(_vm.renderIcons(trait.name))
       }
@@ -7153,7 +7379,32 @@ var render = function render() {
         innerHTML: _vm._s(_vm.renderIcons(trait.description))
       }
     })]);
-  }), 0)]);
+  }), 0) : _vm._e(), _vm._v(" "), _vm.characterEquipment && _vm.characterEquipment.length && _vm.showEquipmentCard === 1 ? _c("a", {
+    staticClass: "character__card bg-white border border-black",
+    attrs: {
+      href: "#"
+    },
+    on: {
+      click: function click($event) {
+        $event.preventDefault();
+        return _vm.$emit("click", _vm.character);
+      }
+    }
+  }, _vm._l(_vm.characterEquipment, function (equipment) {
+    return _c("p", {
+      key: equipment.id,
+      staticClass: "character__card__row character__card__row--large"
+    }, [_c("span", {
+      staticClass: "font-sans",
+      domProps: {
+        innerHTML: _vm._s(_vm.renderIcons(equipment.name))
+      }
+    }), _vm._v(": "), _c("span", {
+      domProps: {
+        innerHTML: _vm._s(_vm.renderIcons(equipment.description))
+      }
+    })]);
+  }), 0) : _vm._e()]);
 };
 var staticRenderFns = [];
 render._withStripped = true;
@@ -7180,21 +7431,76 @@ var render = function render() {
     staticClass: "character-generator"
   }, [_vm.error ? _c("p", {
     staticClass: "character-generator__error"
-  }, [_vm._v("\n    There was an error getting app data from Knight Models.\n  ")]) : _c("div", [!_vm.loaded ? _c("div", {
-    staticClass: "flex flex-col p-6"
+  }, [_vm._v("\n    There was an error getting app data from Knight Models.\n  ")]) : [!_vm.loaded ? _c("div", {
+    staticClass: "flex flex-col noprint p-6"
   }, [_c("h2", {
     staticClass: "text-3xl"
-  }, [_vm._v("Loading...")])]) : _c("div", [_c("div", {
+  }, [_vm._v("Loading...")])]) : [_c("div", {
     staticClass: "flex flex-col noprint mb-20 p-6"
   }, [_c("h1", {
     staticClass: "text-4xl mb-4"
-  }, [_vm._v("Batman Miniature Game Character Printer")]), _vm._v(" "), _c("h2", {
-    staticClass: "font-serif text-2xl mb-8"
+  }, [_vm._v("Batman Miniature Game Character Printer")]), _vm._v(" "), _vm.version ? _c("h2", {
+    staticClass: "font-serif text-2xl mb-3"
   }, [_vm._v("Game Data Version: "), _c("strong", {
     staticClass: "font-sans"
-  }, [_vm._v(_vm._s(_vm.version))])]), _vm._v(" "), _c("p", {
+  }, [_vm._v(_vm._s(_vm.formattedVersion) + " (" + _vm._s(_vm.version) + ")")])]) : _vm._e(), _vm._v(" "), _c("h2", {
+    staticClass: "font-serif text-2xl mb-2"
+  }, [_vm._v("Eternal: "), _c("input", {
+    attrs: {
+      type: "checkbox"
+    },
+    domProps: {
+      value: _vm.eternal,
+      checked: _vm.eternal
+    },
+    on: {
+      input: _vm.toggleEternal
+    }
+  })]), _vm._v(" "), _c("h2", {
+    staticClass: "font-serif text-2xl mb-3"
+  }, [_vm._v("Show separate equipment card? "), _c("input", {
+    attrs: {
+      type: "checkbox"
+    },
+    domProps: {
+      value: _vm.showEquipmentCard,
+      checked: _vm.showEquipmentCard
+    },
+    on: {
+      input: _vm.toggleEquipmentCard
+    }
+  })]), _vm._v(" "), !_vm.crew ? _c("p", {
+    staticClass: "font-serif text-xl mb-6"
+  }, [_vm._v("Select your crew to populate equipment choices.")]) : _vm._e(), _vm._v(" "), _vm.crew ? _c("a", {
+    attrs: {
+      href: "#"
+    },
+    on: {
+      click: function click($event) {
+        $event.preventDefault();
+        _vm.crewInputExpanded = !_vm.crewInputExpanded;
+      }
+    }
+  }, [_c("h3", {
+    staticClass: "font-serif text-2xl"
+  }, [_vm._v("Crew: "), _c("strong", {
+    staticClass: "font-sans"
+  }, [_vm._v(_vm._s(_vm.crew.name))])])]) : _vm._e(), _vm._v(" "), !_vm.crew || _vm.crewInputExpanded ? _c("autocomplete", {
+    ref: "crewAutocomplete",
+    staticClass: "mb-8",
+    attrs: {
+      search: _vm.searchCrews,
+      "get-result-value": _vm.getCrewResultValue
+    },
+    on: {
+      submit: _vm.selectCrew
+    }
+  }) : _vm._e(), _vm._v(" "), _vm.crew ? _c("div", {
+    staticClass: "mt-10"
+  }, [_c("p", {
     staticClass: "font-serif text-xl mb-6"
   }, [_vm._v("Search for characters below and click to add them to your print sheet. Click to remove them.")]), _vm._v(" "), _c("autocomplete", {
+    ref: "characterAutocomplete",
     attrs: {
       search: _vm.search,
       "get-result-value": _vm.getResultValue
@@ -7202,26 +7508,35 @@ var render = function render() {
     on: {
       submit: _vm.addCharacter
     }
-  })], 1), _vm._v(" "), _c("div", {
+  }), _vm._v(" "), _vm._m(0)], 1) : _vm._e()], 1), _vm._v(" "), _c("div", {
     staticClass: "flex flex-col"
   }, _vm._l(_vm.characters_to_print, function (character) {
     return _c("character", {
       key: character.id,
       attrs: {
         character: character,
+        crew: _vm.crew,
+        version: _vm.formattedVersion,
         affiliations: _vm.affiliations,
         traits: _vm.traits,
         equipment: _vm.equipment,
         upgrades: _vm.upgrades,
-        weapons: _vm.weapons
+        weapons: _vm.weapons,
+        "show-equipment-card": _vm.showEquipmentCard
       },
       on: {
         click: _vm.removeCharacter
       }
     });
-  }), 1)])])]);
+  }), 1)]]], 2);
 };
-var staticRenderFns = [];
+var staticRenderFns = [function () {
+  var _vm = this,
+    _c = _vm._self._c;
+  return _c("p", {
+    staticClass: "mt-6 font-serif text-lg"
+  }, [_vm._v("Recommended print settings to match KM sized cards: "), _c("strong", [_vm._v("A4 / Portrait / Scale: 50%")])]);
+}];
 render._withStripped = true;
 
 
@@ -7335,7 +7650,7 @@ __webpack_require__.r(__webpack_exports__);
 
 var ___CSS_LOADER_EXPORT___ = _node_modules_css_loader_dist_runtime_api_js__WEBPACK_IMPORTED_MODULE_0___default()(function(i){return i[1]});
 // Module
-___CSS_LOADER_EXPORT___.push([module.id, "\n.character {\n\n    display: flex;\n\n    width: 100%;\n\n    flex-direction: row;\n\n    flex-wrap: wrap;\n\n    align-items: flex-start;\n\n    justify-content: flex-start;\n}\n.character__card {\n\n    position: relative;\n\n    margin-bottom: 1.5rem;\n\n    margin-left: 1.5rem;\n\n    width: 693px;\n    height: 496px;\n}\n.character__card__container {\n      width: 693px;\n      margin-left: 1.5rem;\n}\n.character__card__container .character__card {\n\n    margin-left: 0px;\n}\n.character__card__stats {\n\n    position: absolute;\n\n    right: 0.75rem;\n\n    display: flex;\n\n    flex-direction: column;\n      top: 85px;\n      height: 230px;\n      width: 330px;\n}\n.character__card__stats__damage {\n\n    margin-bottom: 1.5rem;\n\n    display: flex;\n\n    flex-direction: row;\n\n    align-items: center;\n\n    justify-content: center;\n\n    align-self: flex-end;\n        width: 300px;\n        margin-top: 20px;\n}\n.character__card__stats__damage__pod {\n\n    position: relative;\n\n    display: flex;\n\n    flex-direction: column;\n}\n.character__card__stats__damage__pod:first-child {\n            margin-right: 110px;\n}\n.character__card__stats__damage__pod h3 {\n\n    align-self: center;\n\n    --tw-bg-opacity: 1;\n\n    background-color: rgb(253 224 71 / var(--tw-bg-opacity));\n\n    font-size: 4.5rem;\n\n    line-height: 1;\n\n    --tw-text-opacity: 1;\n\n    color: rgb(0 0 0 / var(--tw-text-opacity));\n            height: 60px;\n}\n.character__card__stats__damage__pod h4 {\n\n    position: absolute;\n\n    display: inline-block;\n\n    width: 100%;\n\n    --tw-rotate: -90deg;\n\n    transform: translate(var(--tw-translate-x), var(--tw-translate-y)) rotate(var(--tw-rotate)) skewX(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y));\n\n    --tw-bg-opacity: 1;\n\n    background-color: rgb(253 224 71 / var(--tw-bg-opacity));\n\n    text-align: center;\n\n    font-size: 1.25rem;\n\n    line-height: 1.75rem;\n\n    text-transform: uppercase;\n\n    line-height: 1;\n\n    --tw-text-opacity: 1;\n\n    color: rgb(0 0 0 / var(--tw-text-opacity));\n            transform-origin: 0 0;\n            top: 68px;\n            left: calc(100% + 2px);\n            height: 18px;\n            width: 75px;\n}\n.character__card__stats__damage__pod--dark h3 {\n\n    --tw-bg-opacity: 1;\n\n    background-color: rgb(0 0 0 / var(--tw-bg-opacity));\n\n    --tw-text-opacity: 1;\n\n    color: rgb(253 224 71 / var(--tw-text-opacity));\n}\n.character__card__stats__damage__pod--dark h4 {\n\n    --tw-bg-opacity: 1;\n\n    background-color: rgb(0 0 0 / var(--tw-bg-opacity));\n\n    --tw-text-opacity: 1;\n\n    color: rgb(250 204 21 / var(--tw-text-opacity));\n}\n.character__card__stats__row {\n\n    margin-left: auto;\n\n    margin-right: auto;\n\n    margin-bottom: 1.5rem;\n\n    display: flex;\n\n    flex-direction: row;\n\n    align-items: center;\n\n    justify-content: space-between;\n\n    align-self: flex-end;\n}\n.character__card__stats__row--1 {\n          width: 200px;\n}\n.character__card__stats__row--2 {\n          width: 300px;\n}\n.character__card__stats__row__pod {\n\n    position: relative;\n\n    display: flex;\n\n    flex-shrink: 0;\n\n    flex-grow: 0;\n\n    flex-direction: row;\n\n    align-items: center;\n\n    justify-content: flex-start;\n\n    --tw-bg-opacity: 1;\n\n    background-color: rgb(253 224 71 / var(--tw-bg-opacity));\n\n    --tw-text-opacity: 1;\n\n    color: rgb(0 0 0 / var(--tw-text-opacity));\n          width: 90px;\n}\n.character__card__stats__row__pod img {\n\n    position: absolute;\n\n    left: 0px;\n\n    display: block;\n\n    width: 3rem;\n\n    flex-shrink: 0;\n\n    flex-grow: 0;\n            top: -5px;\n            filter: invert(100%);\n            height: 50px;\n            -o-object-fit: contain;\n               object-fit: contain;\n}\n.character__card__stats__row__pod span {\n\n    margin-left: 3.5rem;\n\n    font-size: 2.25rem;\n\n    line-height: 2.5rem;\n\n    --tw-text-opacity: 1;\n\n    color: rgb(0 0 0 / var(--tw-text-opacity));\n}\n.character__card__bottom__banner {\n\n    position: absolute;\n\n    bottom: 0px;\n\n    display: flex;\n\n    width: 100%;\n\n    flex-direction: column;\n\n    flex-wrap: wrap;\n\n    overflow-x: auto;\n\n    --tw-bg-opacity: 1;\n\n    background-color: rgb(253 224 71 / var(--tw-bg-opacity));\n\n    padding: 0.25rem;\n      height: 75px;\n}\n.character__card__bottom__banner__tag {\n\n    display: block;\n\n    width: 100%;\n\n    font-size: 1rem;\n\n    line-height: 1.5rem;\n\n    line-height: 1;\n\n    --tw-text-opacity: 1;\n\n    color: rgb(0 0 0 / var(--tw-text-opacity));\n        max-width: 25%;\n        margin-bottom: 1px;\n}\n.character__card__bottom__banner__tag img {\n\n    display: inline;\n\n    width: auto;\n          filter: invert(100%);\n          height: 10px;\n}\n.character__card__middle__banner {\n\n    position: absolute;\n\n    left: 0px;\n\n    display: flex;\n\n    width: 100%;\n\n    flex-direction: column;\n      bottom: 74px;\n}\n.character__card__middle__banner__row {\n\n    margin-bottom: 0.25rem;\n\n    display: flex;\n\n    flex-direction: row;\n\n    align-items: flex-start;\n\n    justify-content: space-between;\n\n    padding-left: 0.75rem;\n\n    padding-right: 0.75rem;\n        background-color: rgba(0, 0, 0, 0.7);\n        height: 30px;\n}\n.character__card__middle__banner__row__tag {\n\n    height: 100%;\n\n    flex-shrink: 0;\n\n    flex-grow: 0;\n\n    font-size: 1.125rem;\n\n    line-height: 1.75rem;\n\n    --tw-text-opacity: 1;\n\n    color: rgb(253 224 71 / var(--tw-text-opacity));\n}\n.character__card__middle__banner__row__title {\n\n    display: block;\n\n    overflow: hidden;\n\n    text-overflow: ellipsis;\n\n    white-space: nowrap;\n          max-width: 120px;\n         width:20%;\n}\n.character__card__middle__banner__row__damage {\n          width: 15%;\n          display: inline-flex;\n          align-items: center;\n          justify-content: flex-start;\n}\n.character__card__middle__banner__row__damage img {\n\n    display: inline;\n            height: 20px;\n            width: 20px;\n            -o-object-fit: contain;\n               object-fit: contain;\n            filter: brightness(0) saturate(100%) invert(85%) sepia(27%) saturate(1037%) hue-rotate(353deg) brightness(104%) contrast(98%);\n}\n.character__card__middle__banner__row__damage img:not(:last-child) {\n              margin-right: 3px;\n}\n.character__card__middle__banner__row__ammo {\n          width: 5%;\n          display: inline-flex;\n          align-items: center;\n          justify-content: flex-start;\n}\n.character__card__middle__banner__row__ammo img {\n\n    margin-left: 0.25rem;\n\n    display: inline;\n\n    width: auto;\n            height: 20px;\n            width: 20px;\n            -o-object-fit: contain;\n               object-fit: contain;\n            filter: brightness(0) saturate(100%) invert(85%) sepia(27%) saturate(1037%) hue-rotate(353deg) brightness(104%) contrast(98%);\n}\n.character__card__middle__banner__row__rof {\n          width: 5%;\n          display: inline-flex;\n          align-items: center;\n          justify-content: flex-start;\n}\n.character__card__middle__banner__row__rof img {\n\n    display: inline;\n\n    width: auto;\n            height: 20px;\n            width: 20px;\n            -o-object-fit: contain;\n               object-fit: contain;\n            filter: brightness(0) saturate(100%) invert(85%) sepia(27%) saturate(1037%) hue-rotate(353deg) brightness(104%) contrast(98%);\n}\n.character__card__middle__banner__row__traits {\n          width: 55%;\n          text-align: right;\n}\n.character__card__banner {\n\n    position: absolute;\n\n    top: 0px;\n\n    display: flex;\n\n    width: 100%;\n\n    flex-direction: row;\n      height: 75px;\n}\n.character__card__banner__name {\n\n    width: 50%;\n\n    padding: 0.75rem;\n}\n.character__card__banner__name h4 {\n\n    margin-bottom: 0.5rem;\n\n    font-size: 1.875rem;\n\n    line-height: 2.25rem;\n\n    line-height: 1;\n}\n.character__card__banner__name h5 {\n\n    font-size: 1.125rem;\n\n    line-height: 1.75rem;\n\n    line-height: 1;\n}\n.character__card__banner__pod {\n        width: 12.5%;\n        position: relative;\n        display: flex;\n        flex-direction: row;\n        align-items: flex-start;\n        padding: 0.5rem;\n}\n.character__card__banner__pod__images {\n\n    display: flex;\n\n    width: 100%;\n\n    flex-shrink: 0;\n\n    flex-grow: 1;\n\n    flex-direction: row;\n\n    flex-wrap: wrap;\n\n    align-items: flex-end;\n          margin-left: 15px;\n}\n.character__card__banner__pod__images img {\n            filter: invert(100%);\n            margin-bottom: 0.25rem;\n            height: auto;\n            width: 50%;\n}\n.character__card__banner__pod--col {\n\n    flex-direction: column;\n}\n.character__card__banner__pod--center {\n\n    align-items: center;\n}\n.character__card__banner__pod:not(:last-child) {\n\n    border-right-width: 1px;\n\n    --tw-border-opacity: 1;\n\n    border-color: rgb(253 224 71 / var(--tw-border-opacity));\n}\n.character__card__banner__pod__title {\n\n    position: absolute;\n\n    display: inline-block;\n\n    height: 100%;\n\n    --tw-rotate: -90deg;\n\n    transform: translate(var(--tw-translate-x), var(--tw-translate-y)) rotate(var(--tw-rotate)) skewX(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y));\n\n    text-align: right;\n\n    font-size: 1rem;\n\n    line-height: 1.5rem;\n\n    text-transform: uppercase;\n\n    line-height: 1;\n          width: 70px;\n          top: 0.5rem;\n          left: 0.5rem;\n}\n.character__card__banner__pod__text {\n\n    font-size: 1.5rem;\n\n    line-height: 2rem;\n\n    line-height: 1;\n}\n.character__card__banner__pod__text:not(:last-child) {\n\n    margin-bottom: 0.25rem;\n}\n.character__card__row {\n\n    margin-bottom: 0.25rem;\n\n    padding-left: 0.25rem;\n\n    padding-right: 0.25rem;\n\n    font-family: Open Sans, sans-serif;\n\n    line-height: 1;\n}\n.character__card__row strong, .character__card__row span {\n\n    font-size: 0.75rem;\n\n    line-height: 1rem;\n}\n.character__card__row--large strong, .character__card__row--large span {\n\n    font-size: 1rem;\n\n    line-height: 1.5rem;\n}\n.character__card__row:first-child {\n\n    margin-top: 0.25rem;\n}\n.character__card__row img {\n        filter: invert(100%);\n        width: 20px;\n        height: 12px;\n        -o-object-fit: contain;\n           object-fit: contain;\n        display: inline;\n        height: auto;\n}\n@media print {\n.character {\n}\n}\n", ""]);
+___CSS_LOADER_EXPORT___.push([module.id, "\n.character {\n\n    display: flex;\n\n    width: 100%;\n\n    flex-direction: row;\n\n    flex-wrap: wrap;\n\n    align-items: flex-start;\n\n    justify-content: flex-start;\n}\n.character__options {\n\n    display: flex;\n\n    height: 100%;\n\n    width: 100%;\n\n    flex-direction: column;\n\n    flex-wrap: wrap;\n\n    padding: 0.25rem;\n}\n.character__options span {\n\n    width: 33.333333%;\n}\n.character__card {\n\n    position: relative;\n\n    margin-bottom: 1.5rem;\n\n    margin-left: 1.5rem;\n\n    width: 693px;\n    height: 496px;\n}\n.character__card__version {\n\n    position: absolute;\n\n    left: 0.75rem;\n\n    font-size: 0.875rem;\n\n    line-height: 1.25rem;\n\n    --tw-text-opacity: 1;\n\n    color: rgb(255 212 0 / var(--tw-text-opacity));\n      top: 85px;\n}\n.character__card__container {\n      width: 693px;\n      margin-left: 1.5rem;\n}\n.character__card__container .character__card {\n\n    margin-left: 0px;\n}\n.character__card__stats {\n\n    position: absolute;\n\n    right: 0.75rem;\n\n    display: flex;\n\n    flex-direction: column;\n      top: 85px;\n      height: 230px;\n      width: 330px;\n}\n.character__card__stats__damage {\n\n    margin-bottom: 0.75rem;\n\n    display: flex;\n\n    flex-direction: row;\n\n    align-items: center;\n\n    justify-content: center;\n\n    align-self: flex-end;\n        width: 300px;\n}\n.character__card__stats__damage__pod {\n\n    position: relative;\n\n    display: flex;\n\n    flex-direction: column;\n\n    align-items: center;\n\n    justify-content: center;\n          width: 125px;\n          height: 125px;\n}\n.character__card__stats__damage__pod__image {\n\n    position: absolute;\n\n    left: 0px;\n\n    height: auto;\n\n    width: 100%;\n            top: 10px;\n}\n.character__card__stats__damage__pod:first-child {\n            margin-right: 40px;\n}\n.character__card__stats__damage__pod h3 {\n\n    position: relative;\n\n    align-self: center;\n\n    font-size: 4.5rem;\n\n    line-height: 1;\n\n    --tw-text-opacity: 1;\n\n    color: rgb(0 0 0 / var(--tw-text-opacity));\n            z-index: 2;\n            height: 60px;\n}\n.character__card__stats__damage__pod h4 {\n\n    position: absolute;\n\n    display: inline-block;\n\n    width: 100%;\n\n    --tw-rotate: -90deg;\n\n    transform: translate(var(--tw-translate-x), var(--tw-translate-y)) rotate(var(--tw-rotate)) skewX(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y));\n\n    --tw-bg-opacity: 1;\n\n    background-color: rgb(255 212 0 / var(--tw-bg-opacity));\n\n    text-align: center;\n\n    text-transform: uppercase;\n\n    line-height: 1;\n\n    --tw-text-opacity: 1;\n\n    color: rgb(0 0 0 / var(--tw-text-opacity));\n            font-size: 1.5rem;\n            transform-origin: 0 0;\n            top: 110px;\n            left: 88px;\n            height: 22px;\n            width: 90px;\n            z-index: 2;\n}\n.character__card__stats__damage__pod--dark .character__card__stats__damage__pod__image {\n              top: 2px;\n              left: -7px;\n}\n.character__card__stats__damage__pod--dark h3 {\n\n    --tw-text-opacity: 1;\n\n    color: rgb(255 212 0 / var(--tw-text-opacity));\n              margin-left: -20px;\n}\n.character__card__stats__damage__pod--dark h4 {\n\n    --tw-bg-opacity: 1;\n\n    background-color: rgb(0 0 0 / var(--tw-bg-opacity));\n\n    --tw-text-opacity: 1;\n\n    color: rgb(255 212 0 / var(--tw-text-opacity));\n}\n.character__card__stats__row {\n\n    margin-left: auto;\n\n    margin-right: auto;\n\n    margin-bottom: 0.75rem;\n\n    display: flex;\n\n    flex-direction: row;\n\n    align-items: center;\n\n    justify-content: space-between;\n\n    align-self: flex-end;\n}\n.character__card__stats__row--1 {\n          width: 200px;\n}\n.character__card__stats__row--2 {\n          width: 300px;\n}\n.character__card__stats__row__pod {\n\n    position: relative;\n\n    display: flex;\n\n    flex-shrink: 0;\n\n    flex-grow: 0;\n\n    flex-direction: row;\n\n    align-items: center;\n\n    justify-content: flex-start;\n\n    --tw-text-opacity: 1;\n\n    color: rgb(0 0 0 / var(--tw-text-opacity));\n          width: 90px;\n}\n.character__card__stats__row__pod img {\n\n    position: absolute;\n\n    left: 0px;\n\n    top: 50%;\n\n    display: block;\n\n    flex-shrink: 0;\n\n    flex-grow: 0;\n            width: 102px;\n            height: auto;\n            z-index: 1;\n            transform: translateY(-50%);\n}\n.character__card__stats__row__pod span {\n\n    position: relative;\n\n    z-index: 5;\n\n    margin-left: 3.5rem;\n\n    font-size: 2.25rem;\n\n    line-height: 2.5rem;\n\n    --tw-text-opacity: 1;\n\n    color: rgb(0 0 0 / var(--tw-text-opacity));\n}\n.character__card__bottom__banner {\n\n    position: absolute;\n\n    bottom: 0px;\n\n    display: flex;\n\n    width: 100%;\n\n    flex-direction: column;\n\n    flex-wrap: wrap;\n\n    overflow-x: auto;\n\n    --tw-bg-opacity: 1;\n\n    background-color: rgb(255 212 0 / var(--tw-bg-opacity));\n\n    padding-left: 0.25rem;\n\n    padding-right: 0.25rem;\n\n    padding-top: 0.25rem;\n      height: 75px;\n}\n.character__card__bottom__banner__tag {\n\n    display: block;\n\n    width: 100%;\n\n    font-size: 1rem;\n\n    line-height: 1.5rem;\n\n    line-height: 1;\n\n    --tw-text-opacity: 1;\n\n    color: rgb(0 0 0 / var(--tw-text-opacity));\n        max-width: 25%;\n        margin-bottom: 1px;\n}\n.character__card__bottom__banner__tag img {\n\n    display: inline;\n\n    width: auto;\n\n          height: 10px;\n}\n.character__card__middle__banner {\n\n    position: absolute;\n\n    left: 0px;\n\n    z-index: 5;\n\n    display: flex;\n\n    width: 100%;\n\n    flex-direction: column;\n      bottom: 74px;\n}\n.character__card__middle__banner__row {\n\n    margin-bottom: 0.25rem;\n\n    display: flex;\n\n    flex-direction: row;\n\n    align-items: center;\n\n    justify-content: space-between;\n\n    padding-left: 0.75rem;\n\n    padding-right: 0.75rem;\n        background-color: rgba(0, 0, 0, 0.7);\n        height: 30px;\n}\n.character__card__middle__banner__row__tag {\n\n    height: auto;\n\n    flex-shrink: 0;\n\n    flex-grow: 0;\n\n    line-height: 1;\n\n    --tw-text-opacity: 1;\n\n    color: rgb(255 212 0 / var(--tw-text-opacity));\n          font-size: 1.15rem;\n}\n.character__card__middle__banner__row__title {\n\n    display: block;\n\n    overflow: hidden;\n\n    text-overflow: ellipsis;\n\n    white-space: nowrap;\n          max-width: 128px;\n         width:20%;\n}\n.character__card__middle__banner__row__damage {\n          width: 15%;\n          display: inline-flex;\n          align-items: center;\n          justify-content: flex-start;\n}\n.character__card__middle__banner__row__damage img {\n\n    display: inline;\n            height: 30px;\n            width: 20px;\n            -o-object-fit: contain;\n               object-fit: contain;\n            filter: brightness(0) saturate(100%) invert(85%) sepia(27%) saturate(1037%) hue-rotate(353deg) brightness(104%) contrast(98%);\n}\n.character__card__middle__banner__row__damage img:not(:last-child) {\n              margin-right: 3px;\n}\n.character__card__middle__banner__row__ammo {\n          width: 5%;\n          margin-left: 0.25rem;\n          display: inline-flex;\n          align-items: center;\n          justify-content: flex-start;\n}\n.character__card__middle__banner__row__ammo img {\n\n    display: inline;\n\n    width: auto;\n            height: 30px;\n            width: 20px;\n            -o-object-fit: cover;\n               object-fit: cover;\n            filter: brightness(0) saturate(100%) invert(85%) sepia(27%) saturate(1037%) hue-rotate(353deg) brightness(104%) contrast(98%);\n}\n.character__card__middle__banner__row__rof {\n          width: 5%;\n          display: inline-flex;\n          align-items: center;\n          justify-content: flex-start;\n}\n.character__card__middle__banner__row__rof img {\n\n    display: inline;\n\n    width: auto;\n            height: 30px;\n            width: 20px;\n            -o-object-fit: cover;\n               object-fit: cover;\n            filter: brightness(0) saturate(100%) invert(85%) sepia(27%) saturate(1037%) hue-rotate(353deg) brightness(104%) contrast(98%);\n}\n.character__card__middle__banner__row__traits {\n          width: 55%;\n          text-align: right;\n}\n.character__card__banner {\n\n    position: absolute;\n\n    top: 0px;\n\n    display: flex;\n\n    width: 100%;\n\n    flex-direction: row;\n      height: 75px;\n}\n.character__card__banner__name {\n\n    width: 50%;\n\n    padding: 0.75rem;\n}\n.character__card__banner__name h4 {\n\n    margin-bottom: 0.5rem;\n\n    font-size: 1.875rem;\n\n    line-height: 2.25rem;\n\n    line-height: 1;\n}\n.character__card__banner__name h5 {\n\n    font-size: 1.125rem;\n\n    line-height: 1.75rem;\n\n    line-height: 1;\n}\n.character__card__banner__pod {\n        width: 12.5%;\n        position: relative;\n        display: flex;\n        flex-direction: row;\n        align-items: flex-start;\n        padding: 0.5rem;\n}\n.character__card__banner__pod__images {\n\n    display: flex;\n\n    width: 100%;\n\n    flex-shrink: 0;\n\n    flex-grow: 1;\n\n    flex-direction: row;\n\n    flex-wrap: wrap;\n\n    align-items: flex-end;\n          margin-left: 15px;\n}\n.character__card__banner__pod__images img {\n\n    margin-bottom: 0.25rem;\n            width: 28px;\n            height: 28px;\n            -o-object-fit: contain;\n               object-fit: contain;\n}\n.character__card__banner__pod__images img.character__card__banner__pod__image--dark {\n              filter: invert(100%);\n}\n.character__card__banner__pod__images .img {\n\n    margin-bottom: 0.25rem;\n\n    background-position: center;\n\n    background-repeat: no-repeat;\n            width: 28px;\n            height: 28px;\n            background-size: 40px;\n}\n.character__card__banner__pod__images .img.character__card__banner__pod__image--dark {\n              filter: invert(100%);\n}\n.character__card__banner__pod--col {\n\n    flex-direction: column;\n}\n.character__card__banner__pod--center {\n\n    align-items: center;\n}\n.character__card__banner__pod:not(:last-child) {\n\n    border-right-width: 1px;\n\n    --tw-border-opacity: 1;\n\n    border-color: rgb(255 212 0 / var(--tw-border-opacity));\n}\n.character__card__banner__pod__title {\n\n    position: absolute;\n\n    display: inline-block;\n\n    height: 100%;\n\n    --tw-rotate: -90deg;\n\n    transform: translate(var(--tw-translate-x), var(--tw-translate-y)) rotate(var(--tw-rotate)) skewX(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y));\n\n    text-align: right;\n\n    font-size: 1rem;\n\n    line-height: 1.5rem;\n\n    text-transform: uppercase;\n\n    line-height: 1;\n          width: 70px;\n          top: 0.5rem;\n          left: 0.5rem;\n}\n.character__card__banner__pod__text {\n\n    font-size: 1.5rem;\n\n    line-height: 2rem;\n\n    line-height: 1;\n}\n.character__card__banner__pod__text:not(:last-child) {\n\n    margin-bottom: 0.25rem;\n}\n.character__card__row {\n\n    margin-bottom: 0.25rem;\n\n    padding-left: 0.25rem;\n\n    padding-right: 0.25rem;\n\n    font-family: Open Sans, sans-serif;\n\n    line-height: 1;\n}\n.character__card__row span {\n\n    font-size: 0.75rem;\n\n    line-height: 1rem;\n}\n.character__card__row--large span {\n\n    font-size: 1rem;\n\n    line-height: 1.5rem;\n}\n.character__card__row:first-child {\n\n    margin-top: 0.25rem;\n}\n.character__card__row img {\n\n        width: 20px;\n        height: 12px;\n        -o-object-fit: contain;\n           object-fit: contain;\n        display: inline;\n        height: auto;\n}\n", ""]);
 // Exports
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (___CSS_LOADER_EXPORT___);
 
