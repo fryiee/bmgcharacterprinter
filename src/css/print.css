@@ -3,6 +3,12 @@
 }
 
 @media print {
+    html, body {
+        min-height: initial !important;
+        overflow-x: initial !important;
+        overflow-y: initial !important;
+    }
+
     main#app {
         @apply block !important;
     }

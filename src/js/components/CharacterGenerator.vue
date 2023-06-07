@@ -22,7 +22,7 @@
           </div>
           <div class="mt-10 relative z-5" v-if="crew">
             <p class="font-serif text-xl mb-6">Search for characters below and click to add them to your print sheet. Click to remove them.</p>
-            <autocomplete :search="searchCharacters" key="test2" ref="characterAutoCompleteField" :get-result-value="getResultValue" @submit="addCharacter"></autocomplete>
+            <autocomplete :search="searchCharacters" key="characterAutocompleteField" ref="characterAutocomplete" :get-result-value="getResultValue" @submit="addCharacter"></autocomplete>
             <p class="mt-6 font-serif text-lg">Recommended print settings to match KM sized cards: <strong>A4 / Portrait / Scale: 50%</strong></p>
           </div>
         </div>

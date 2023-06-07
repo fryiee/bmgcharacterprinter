@@ -299,7 +299,7 @@ export default {
 
         this.character.affiliations.forEach((affiliation) => {
           for (let i = 0; i < this.affiliations.length; i++) {
-            let existingAffiliation = this.affiliations[i]
+            let existingAffiliation = {...this.affiliations[i]}
 
             if (existingAffiliation.id === affiliation.affiliation_id) {
               affiliations.push(existingAffiliation)
@@ -318,7 +318,7 @@ export default {
 
         this.character.rival_affiliation_ids.forEach((affiliation) => {
           for (let i = 0; i < this.affiliations.length; i++) {
-            let existingAffiliation = this.affiliations[i]
+            let existingAffiliation = {...this.affiliations[i]}
 
             if (existingAffiliation.id === affiliation) {
               affiliations.push(existingAffiliation)
@@ -337,7 +337,7 @@ export default {
 
         this.character.traits.forEach((trait) => {
           for (let i = 0; i < this.traits.length; i++) {
-            let existingTrait = this.traits[i]
+            let existingTrait = {...this.traits[i]}
 
             if (existingTrait.id === trait.trait_id && (traits.findIndex(previousTrait => previousTrait.id === trait.trait_id) === -1)) {
               if (trait.alternate_name !== null) {
@@ -350,7 +350,7 @@ export default {
 
         if (this.grantedTraits && this.grantedTraits.length) {
           for (let i = 0; i < this.grantedTraits.length; i++) {
-            const existingGrantedTrait = this.grantedTraits[i]
+            const existingGrantedTrait = {...this.grantedTraits[i]}
             const existingRankIndex = this.characterRanks.findIndex(characterRank => characterRank.id === existingGrantedTrait.rank)
 
             if (existingRankIndex !== -1) {
@@ -367,7 +367,7 @@ export default {
           if (equipment.traits.length) {
             equipment.traits.forEach((trait) => {
               for (let i = 0; i < this.traits.length; i++) {
-                let existingTrait = this.traits[i]
+                let existingTrait = {...this.traits[i]}
 
                 if (existingTrait.id === trait.trait_id && (traits.findIndex(previousTrait => previousTrait.id === trait.trait_id) === -1)) {
                   if (trait.alternate_name !== null) {
@@ -460,10 +460,11 @@ export default {
         return []
       } else {
         const equipment = []
+        const selectedEquipments = [...this.selectedEquipment]
 
-        this.selectedEquipment.forEach((selectedEquipment) => {
+        selectedEquipments.forEach((selectedEquipment) => {
           for (let i = 0; i < this.equipment.length; i++) {
-            let existingEquipment = this.equipment[i]
+            let existingEquipment = {...this.equipment[i]}
 
             if (existingEquipment.id === selectedEquipment.id) {
               equipment.push(existingEquipment)
@@ -482,7 +483,7 @@ export default {
 
         this.character.upgrade_ids.forEach((upgrade_id) => {
           for (let i = 0; i < this.upgrades.length; i++) {
-            let existingUpgrade = this.upgrades[i]
+            let existingUpgrade = {...this.upgrades[i]}
 
             if (existingUpgrade.id === upgrade_id) {
               upgrades.push(existingUpgrade)
@@ -520,7 +521,7 @@ export default {
 
         this.character.weapon_ids.forEach((weapon_id) => {
           for (let i = 0; i < this.weapons.length; i++) {
-            let existingWeapon = this.weapons[i]
+            let existingWeapon = {...this.weapons[i]}
 
             if (existingWeapon.id === weapon_id) {
               weapons.push(existingWeapon)
@@ -531,7 +532,7 @@ export default {
         this.characterEquipment.forEach((equipment) => {
           if (equipment.granted_weapon_id) {
             for (let i = 0; i < this.weapons.length; i++) {
-              let existingWeapon = this.weapons[i]
+              let existingWeapon = {...this.weapons[i]}
 
               if (existingWeapon.id === equipment.granted_weapon_id) {
                 weapons.push(existingWeapon)
