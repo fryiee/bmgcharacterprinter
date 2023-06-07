@@ -17,15 +17,17 @@
           <a href="#" @click.prevent="crewInputExpanded = !crewInputExpanded" v-if="crew">
             <h3 class="font-serif text-2xl">Crew: <strong class="font-sans">{{crew.name}}</strong></h3>
           </a>
-          <autocomplete v-if="!crew || crewInputExpanded" ref="crewAutocomplete" :search="searchCrews" :get-result-value="getCrewResultValue" @submit="selectCrew" class="mb-8"></autocomplete>
-          <div class="mt-10" v-if="crew">
+          <div class="relative z-10">
+            <autocomplete v-if="!crew || crewInputExpanded" ref="crewAutocomplete" :search="searchCrews" :get-result-value="getCrewResultValue" @submit="selectCrew" class="mb-8"></autocomplete>
+          </div>
+          <div class="mt-10 relative z-5" v-if="crew">
             <p class="font-serif text-xl mb-6">Search for characters below and click to add them to your print sheet. Click to remove them.</p>
             <autocomplete :search="search" ref="characterAutocomplete" :get-result-value="getResultValue" @submit="addCharacter"></autocomplete>
-            <p class="mt-6 font-serif text-lg">Recommended print settings to match KM sized cards: <strong>A4 / Portrait / Scale: 50%</strong></p>
+            <p class="mt-6 font-serif text-lg">Recommended print settings to match KM sized cards: <strong>A4 / Portrait / Scale: 50% / No Margins</strong></p>
           </div>
         </div>
         <div class="flex flex-col">
-          <character :character="character" v-for="character in characters_to_print" :key="character.id" :crew="crew" :version="formattedVersion" :affiliations="affiliations" :traits="traits" :equipment="equipment" :upgrades="upgrades" :weapons="weapons" :show-equipment-card="showEquipmentCard" @click="removeCharacter"></character>
+          <character :character="character" v-for="character in characters_to_print" :all-selected-characters="characters_to_print" :granted-traits="grantedTraits" :key="character.id" :crew="crew" :version="formattedVersion" :affiliations="affiliations" :traits="traits" :equipment="equipment" :upgrades="upgrades" :weapons="weapons" :show-equipment-card="showEquipmentCard" @click="removeCharacter"></character>
         </div>
       </template>
     </template>
@@ -103,6 +105,49 @@ export default {
     formattedVersion() {
       const date = new Date(parseInt(this.version) * 1000)
       return 'v.' + date.getUTCFullYear().toString() + '-' + (date.getUTCMonth() + 1).toString().padStart(2, '0') + '-' + date.getUTCDate().toString().padStart(2, '0')
+    },
+    grantedTraits () {
+      const grantedTraitList = []
+
+      this.characters_to_print.forEach((character) => {
+        const kaosAgentIndex = character.traits.findIndex(trait => trait.trait_id === 182)
+
+        if (kaosAgentIndex !== -1) {
+          grantedTraitList.push({
+            rank: 5,
+            id: 357
+          })
+        }
+
+        const playNiceIndex = character.traits.findIndex(trait => trait.trait_id === 260)
+
+        if (playNiceIndex !== -1) {
+          grantedTraitList.push({
+            rank: 5,
+            id: 36
+          })
+        }
+
+        const theBossIndex = character.traits.findIndex(trait => trait.trait_id === 335)
+
+        if (theBossIndex !== -1) {
+          grantedTraitList.push({
+            rank: 5,
+            id: 119
+          })
+        }
+
+        const theUntouchableIndex = character.traits.findIndex(trait => trait.trait_id === 344)
+
+        if (theUntouchableIndex !== -1) {
+          grantedTraitList.push({
+            rank: 5,
+            id: 134
+          })
+        }
+      })
+
+      return grantedTraitList
     }
   },
   async mounted() {

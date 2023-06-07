@@ -12,7 +12,7 @@
           <div class="character__card__banner__pod">
             <small class="character__card__banner__pod__title">Rank</small>
             <div class="character__card__banner__pod__images">
-              <img v-for="rank in characterRanks" :key="rank.id" :alt="rank.icon" :src="'/dist/img/icons/' + rank.icon + '.svg'"/>
+              <img v-for="rank in characterRanks" :key="rank.id" :alt="rank.icon" :src="'dist/img/icons/' + rank.icon + '.svg'"/>
             </div>
           </div>
           <div class="character__card__banner__pod">
@@ -36,13 +36,13 @@
         <div class="character__card__stats">
           <div class="character__card__stats__damage">
             <div class="character__card__stats__damage__pod">
-              <img src="/dist/img/icons/background_willpower.svg" alt="background_willpower icon" class="character__card__stats__damage__pod__image"/>
+              <img src="dist/img/icons/background_willpower.svg" alt="background_willpower icon" class="character__card__stats__damage__pod__image"/>
               <h3>{{character.willpower}}</h3>
               <h4>Willpower</h4>
             </div>
 
             <div class="character__card__stats__damage__pod character__card__stats__damage__pod--dark">
-              <img src="/dist/img/icons/background_endurance.png" alt="background_endurance icon" class="character__card__stats__damage__pod__image"/>
+              <img src="dist/img/icons/background_endurance.png" alt="background_endurance icon" class="character__card__stats__damage__pod__image"/>
               <h3>{{character.endurance}}</h3>
               <h4>Endurance</h4>
             </div>
@@ -50,25 +50,25 @@
 
           <div class="character__card__stats__row character__card__stats__row--1">
             <div class="character__card__stats__row__pod">
-              <img src="/dist/img/icons/background_attack.svg" alt="background_attack icon"/>
+              <img src="dist/img/icons/background_attack.svg" alt="background_attack icon"/>
               <span>{{character.attack}}</span>
             </div>
             <div class="character__card__stats__row__pod">
-              <img src="/dist/img/icons/background_defense.svg" alt="background_defense icon"/>
+              <img src="dist/img/icons/background_defense.svg" alt="background_defense icon"/>
               <span>{{character.defense}}</span>
             </div>
           </div>
           <div class="character__card__stats__row character__card__stats__row--2">
             <div class="character__card__stats__row__pod">
-              <img src="/dist/img/icons/background_strength.svg" alt="strength icon"/>
+              <img src="dist/img/icons/background_strength.svg" alt="strength icon"/>
               <span>{{character.strength}}+</span>
             </div>
             <div class="character__card__stats__row__pod">
-              <img src="/dist/img/icons/background_movement.svg" alt="movement icon"/>
+              <img src="dist/img/icons/background_movement.svg" alt="movement icon"/>
               <span>{{character.movement}}</span>
             </div>
             <div class="character__card__stats__row__pod">
-              <img src="/dist/img/icons/background_special.svg" alt="special icon"/>
+              <img src="dist/img/icons/background_special.svg" alt="special icon"/>
               <span>{{character.special}}</span>
             </div>
           </div>
@@ -79,19 +79,19 @@
             <span class="character__card__middle__banner__row__tag character__card__middle__banner__row__title">{{weapon.name}}</span>
             <span class="character__card__middle__banner__row__tag character__card__middle__banner__row__damage">
               <template v-if="weapon.damage">
-              <img v-for="(damage, index) in weaponDamage(weapon)" :key="index" :alt="damage.icon" :src="'/dist/img/icons/' + damage.icon + '.svg'"/>
+              <img v-for="(damage, index) in weaponDamage(weapon)" :key="index" :alt="damage.icon" :src="'dist/img/icons/' + damage.icon + '.svg'"/>
               </template>
               <template v-else>-</template>
             </span>
             <span class="character__card__middle__banner__row__tag character__card__middle__banner__row__rof">
               <template v-if="weapon.rate_of_fire">
-                <span>{{weapon.rate_of_fire}}&nbsp;</span><img src="/dist/img/icons/yellow_rof_icon.svg" alt="ROF icon"/>
+                <span>{{weapon.rate_of_fire}}&nbsp;</span><img src="dist/img/icons/yellow_rof_icon.svg" alt="ROF icon"/>
               </template>
               <template v-else><span>-</span></template>
             </span>
             <span class="character__card__middle__banner__row__tag character__card__middle__banner__row__ammo">
               <template v-if="weapon.ammunition">
-                <span>{{weapon.ammunition}}&nbsp;</span><img src="/dist/img/icons/yellow_ammo_icon.svg" alt="Ammo icon"/>
+                <span>{{weapon.ammunition}}&nbsp;</span><img src="dist/img/icons/yellow_ammo_icon.svg" alt="Ammo icon"/>
               </template>
               <template v-else><span>-</span></template>
             </span>
@@ -133,7 +133,7 @@
 <script>
 export default {
   name: 'Character',
-  props: ['character', 'affiliations', 'traits', 'equipment', 'upgrades', 'weapons', 'crew', 'version', 'eternal', 'showEquipmentCard'],
+  props: ['character', 'affiliations', 'traits', 'equipment', 'upgrades', 'weapons', 'crew', 'version', 'eternal', 'showEquipmentCard', 'allSelectedCharacters', 'grantedTraits'],
   data() {
     return {
       icons: [
@@ -348,6 +348,21 @@ export default {
           }
         })
 
+        if (this.grantedTraits && this.grantedTraits.length) {
+          for (let i = 0; i < this.grantedTraits.length; i++) {
+            const existingGrantedTrait = this.grantedTraits[i]
+            const existingRankIndex = this.characterRanks.findIndex(characterRank => characterRank.id === existingGrantedTrait.rank)
+
+            if (existingRankIndex !== -1) {
+              const existingTraitIndex = this.traits.findIndex(currentTrait => currentTrait.id === existingGrantedTrait.id)
+
+              if (existingTraitIndex !== -1) {
+                traits.push(this.traits[existingTraitIndex])
+              }
+            }
+          }
+        }
+
         this.characterEquipment.forEach((equipment) => {
           if (equipment.traits.length) {
             equipment.traits.forEach((trait) => {
@@ -417,6 +432,14 @@ export default {
 
             if (equipment.required_character_ids.includes(this.character.id)) {
               isCharacter = true
+            } else {
+              for (let i = 0; i < this.allSelectedCharacters.length; i++) {
+                const existingCharacter = this.allSelectedCharacters[i]
+
+                if (equipment.required_character_ids.includes(existingCharacter.id)) {
+                  isCharacter = true
+                }
+              }
             }
 
             if (!isCharacter) {
@@ -581,14 +604,23 @@ export default {
   },
   methods: {
     renderIcons (text) {
+      let alteredText = text
+          .replaceAll('{+', '{PLUS_')
+          .replaceAll('{-', '{LESS_')
+          .replaceAll('-2MOV', '{MOV_MINUS_2_ICON}')
+          .replaceAll('-4MOV', '{MOV_MINUS_4_ICON}')
+          .replaceAll('-6MOV', '{MOV_MINUS_6_ICON}')
+          .replaceAll('+2MOV', '{MOV_2_ICON}')
+          .replaceAll('+4MOV', '{MOV_4_ICON}')
+          .replaceAll('+6MOV', '{MOV_6_ICON}')
       this.icons.forEach((icon) => {
         const uppercaseIcon = icon.toUpperCase()
-        if (text.includes('{' + uppercaseIcon + '}')) {
-          text = text.replaceAll('{' + uppercaseIcon + '}', '<img src="/dist/img/icons/' + icon + '.svg" alt="' + icon + ' icon"/>')
+        if (alteredText.includes('{' + uppercaseIcon + '}')) {
+          alteredText = alteredText.replaceAll('{' + uppercaseIcon + '}', '<img src="dist/img/icons/' + icon + '.svg" alt="' + icon + ' icon"/>')
         }
       })
 
-      return text
+      return alteredText
     },
     weaponDamage (weapon) {
       if (!weapon.damage || weapon.damage.length === 0) {
@@ -766,9 +798,10 @@ export default {
       bottom: 74px;
 
       &__row {
-        @apply flex flex-row mb-1 px-3 items-center justify-between;
+        @apply flex flex-row px-3 items-center justify-between;
         background-color: rgba(0, 0, 0, 0.7);
-        height: 30px;
+        height: 32px;
+        margin-bottom: 0.1rem;
 
         &__tag {
           @apply text-yellow-400 flex-shrink-0 flex-grow-0 h-auto leading-none;
@@ -824,6 +857,7 @@ export default {
         &__traits {
           width: 55%;
           @apply text-right;
+          line-height: 0.8;
         }
       }
     }

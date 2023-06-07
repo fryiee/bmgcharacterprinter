@@ -7,6 +7,7 @@ require('laravel-mix-svg-vue')
 mix.setPublicPath('dist');
 mix.setResourceRoot('dist');
 mix.options({
+    processCssUrls: false,
     postCss: [
         require('postcss-import'),
         require('tailwindcss/nesting'),
