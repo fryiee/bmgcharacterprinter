@@ -12,19 +12,19 @@
           <div class="character__card__banner__pod">
             <small class="character__card__banner__pod__title">Rank</small>
             <div class="character__card__banner__pod__images">
-              <img v-for="rank in characterRanks" :key="rank.id" :alt="rank.icon" :src="'dist/img/icons/' + rank.icon + '.svg'"/>
+              <img v-for="rank in characterRanks" :key="character.id+'-'+'rank-'+rank.id" :alt="rank.icon" :src="'dist/img/icons/' + rank.icon + '.svg'"/>
             </div>
           </div>
           <div class="character__card__banner__pod">
             <small class="character__card__banner__pod__title">Aff</small>
             <div class="character__card__banner__pod__images">
-              <div v-if="affiliation.is_team === false" v-for="affiliation in characterAffiliations" :key="affiliation.id" class="character__card__banner__pod__image--dark img" :style="'background-image:url('+affiliation.icon+');'"></div>
+              <div v-if="affiliation.is_team === false" v-for="affiliation in characterAffiliations" :key="character.id+'-'+'affiliation-'+affiliation.id" class="character__card__banner__pod__image--dark img" :style="'background-image:url('+affiliation.icon+');'"></div>
             </div>
           </div>
           <div class="character__card__banner__pod">
             <small class="character__card__banner__pod__title">Riv</small>
             <div class="character__card__banner__pod__images">
-              <div v-for="affiliation in characterRivals" :key="affiliation.id" class="character__card__banner__pod__image--dark img" :style="'background-image:url('+affiliation.icon+');'"></div>
+              <div v-for="affiliation in characterRivals" :key="character.id+'-'+'rival-'+affiliation.id" class="character__card__banner__pod__image--dark img" :style="'background-image:url('+affiliation.icon+');'"></div>
             </div>
           </div>
           <div class="character__card__banner__pod character__card__banner__pod--col character__card__banner__pod--center">
@@ -75,11 +75,11 @@
         </div>
 
         <div class="character__card__middle__banner">
-          <div v-for="weapon in characterWeaponsWithTraitNames" :key="weapon.id" class="character__card__middle__banner__row">
+          <div v-for="weapon in characterWeaponsWithTraitNames" :key="character.id+'-'+'weapon-'+weapon.id" class="character__card__middle__banner__row">
             <span class="character__card__middle__banner__row__tag character__card__middle__banner__row__title">{{weapon.name}}</span>
             <span class="character__card__middle__banner__row__tag character__card__middle__banner__row__damage">
               <template v-if="weapon.damage">
-              <img v-for="(damage, index) in weaponDamage(weapon)" :key="index" :alt="damage.icon" :src="'dist/img/icons/' + damage.icon + '.svg'"/>
+              <img v-for="(damage, index) in weaponDamage(weapon)" :key="character.id+'-'+damage.icon+'-'+index" :alt="damage.icon" :src="'dist/img/icons/' + damage.icon + '.svg'"/>
               </template>
               <template v-else>-</template>
             </span>
@@ -113,17 +113,17 @@
       </div>
     </div>
     <a href="#" @click.prevent="$emit('click', character)" class="character__card bg-white border border-black">
-      <p :class="'character__card__row'+(characterTraits.length <= 5 ? ' character__card__row--large' : '')" :key="trait.id" v-for="trait in characterTraits">
+      <p :class="'character__card__row'+(characterTraits.length <= 5 ? ' character__card__row--large' : '')" :key="character.id+'-'+'trait-'+trait.id" v-for="trait in characterTraits">
         <span class="font-sans" v-html="renderIcons(trait.name)"></span>:&nbsp;<span v-html="renderIcons(trait.description)"></span>
       </p>
     </a>
     <a v-if="characterWeaponTraits && characterWeaponTraits.length" href="#" @click.prevent="$emit('click', character)" class="character__card bg-white border border-black">
-      <p class="character__card__row character__card__row--large" :key="trait.id" v-for="trait in characterWeaponTraits">
+      <p class="character__card__row character__card__row--large" :key="character.id+'-'+'weapontrait-'+trait.id" v-for="trait in characterWeaponTraits">
         <span class="font-sans" v-html="renderIcons(trait.name)"></span>:&nbsp;<span v-html="renderIcons(trait.description)"></span>
       </p>
     </a>
     <a v-if="characterEquipment && characterEquipment.length && showEquipmentCard === 1" href="#" @click.prevent="$emit('click', character)" class="character__card bg-white border border-black">
-      <p class="character__card__row character__card__row--large" :key="equipment.id" v-for="equipment in characterEquipment">
+      <p class="character__card__row character__card__row--large" :key="character.id+'-'+'equipment-'+equipment.id" v-for="equipment in characterEquipment">
         <span class="font-sans" v-html="renderIcons(equipment.name)"></span>:&nbsp;<span v-html="renderIcons(equipment.description)"></span>
       </p>
     </a>
@@ -548,13 +548,15 @@ export default {
         return []
       } else {
         const characterWeapons = [...this.characterWeapons]
+        const weaponsWithTraits = []
         for (let i = 0; i < characterWeapons.length; i++) {
           const traits = []
           const characterWeapon = characterWeapons[i]
 
+
           characterWeapon.traits.forEach((trait) => {
             for (let i = 0; i < this.traits.length; i++) {
-              let existingTrait = this.traits[i]
+              let existingTrait = {...this.traits[i]}
 
               if (existingTrait.id === trait.trait_id && (traits.findIndex(traitObject => traitObject.id === trait.trait_id) === -1)) {
                 if (trait.alternate_name !== null) {
@@ -565,14 +567,16 @@ export default {
             }
           })
 
-          characterWeapons[i].trait_names = traits.sort((trait1, trait2) => {
+          characterWeapon.trait_names = traits.sort((trait1, trait2) => {
             return trait1.name.localeCompare(trait2.name)
           }).map((trait) => {
             return trait.name
           })
+
+          weaponsWithTraits.push(characterWeapon)
         }
 
-        return characterWeapons
+        return weaponsWithTraits
       }
     },
     characterWeaponTraits () {
@@ -580,11 +584,12 @@ export default {
         return []
       } else {
         const traits = []
+        const characterWeapons = [...this.characterWeapons]
 
-        this.characterWeapons.forEach((characterWeapon) => {
+        characterWeapons.forEach((characterWeapon) => {
           characterWeapon.traits.forEach((trait) => {
             for (let i = 0; i < this.traits.length; i++) {
-              let existingTrait = this.traits[i]
+              let existingTrait = {...this.traits[i]}
 
               if (existingTrait.id === trait.trait_id && (traits.findIndex(traitObject => traitObject.id === trait.trait_id) === -1)) {
                 if (trait.alternate_name !== null) {
@@ -605,6 +610,7 @@ export default {
   methods: {
     renderIcons (text) {
       let alteredText = text
+      alteredText = alteredText
           .replaceAll('{+', '{PLUS_')
           .replaceAll('{-', '{LESS_')
           .replaceAll('-2MOV', '{MOV_MINUS_2_ICON}')
@@ -613,6 +619,12 @@ export default {
           .replaceAll('+2MOV', '{MOV_2_ICON}')
           .replaceAll('+4MOV', '{MOV_4_ICON}')
           .replaceAll('+6MOV', '{MOV_6_ICON}')
+          .replaceAll('MOV+2', 'MOV_2')
+          .replaceAll('MOV+4', 'MOV_4')
+          .replaceAll('MOV+6', 'MOV_6')
+          .replaceAll('MOV-2', 'MOV_MINUS_2')
+          .replaceAll('MOV-4', 'MOV_MINUS_4')
+          .replaceAll('MOV-6', 'MOV_MINUS_6')
       this.icons.forEach((icon) => {
         const uppercaseIcon = icon.toUpperCase()
         if (alteredText.includes('{' + uppercaseIcon + '}')) {

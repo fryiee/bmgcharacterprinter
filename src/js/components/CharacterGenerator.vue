@@ -18,12 +18,12 @@
             <h3 class="font-serif text-2xl">Crew: <strong class="font-sans">{{crew.name}}</strong></h3>
           </a>
           <div class="relative z-10">
-            <autocomplete v-if="!crew || crewInputExpanded" ref="crewAutocomplete" :search="searchCrews" :get-result-value="getCrewResultValue" @submit="selectCrew" class="mb-8"></autocomplete>
+            <autocomplete v-if="!crew || crewInputExpanded" ref="crewAutocomplete" key="crewAutocompleteField" :search="searchCrews" :get-result-value="getCrewResultValue" @submit="selectCrew" class="mb-8"></autocomplete>
           </div>
           <div class="mt-10 relative z-5" v-if="crew">
             <p class="font-serif text-xl mb-6">Search for characters below and click to add them to your print sheet. Click to remove them.</p>
-            <autocomplete :search="search" ref="characterAutocomplete" :get-result-value="getResultValue" @submit="addCharacter"></autocomplete>
-            <p class="mt-6 font-serif text-lg">Recommended print settings to match KM sized cards: <strong>A4 / Portrait / Scale: 50% / No Margins</strong></p>
+            <autocomplete :search="searchCharacters" key="test2" ref="characterAutoCompleteField" :get-result-value="getResultValue" @submit="addCharacter"></autocomplete>
+            <p class="mt-6 font-serif text-lg">Recommended print settings to match KM sized cards: <strong>A4 / Portrait / Scale: 50%</strong></p>
           </div>
         </div>
         <div class="flex flex-col">
@@ -48,7 +48,7 @@ export default {
       showEquipmentCard: 0,
       crew: null,
       crewInputExpanded: false,
-      characters_to_print: []
+      characters_to_print: [],
     }
   },
   computed: {
@@ -70,7 +70,7 @@ export default {
         if (this.eternal) {
           return this.game_data.characters
         } else {
-          return this.game_data.characters.filter(affiliation => affiliation.eternal === false)
+          return this.game_data.characters.filter(character => character.eternal === false)
         }
       }
     },
@@ -196,8 +196,9 @@ export default {
     }
   },
   methods: {
-    search(input) {
+    searchCharacters(input) {
       if (input.length < 1) { return [] }
+      if (!this.characters) { return [] }
       return this.characters.filter(character => {
         return character.alias.toLowerCase()
             .includes(input.toLowerCase()) || character.name.toLowerCase()
@@ -206,6 +207,7 @@ export default {
     },
     searchCrews(input) {
       if (input.length < 1) { return [] }
+      if (!this.affiliations) { return [] }
       return this.affiliations.filter(crew => {
         return crew.name.toLowerCase()
             .includes(input.toLowerCase())
