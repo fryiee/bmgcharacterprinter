@@ -113,18 +113,18 @@
       </div>
     </div>
     <a href="#" @click.prevent="$emit('click', character)" class="character__card bg-white border border-black">
-      <p :class="'character__card__row'+(characterTraits.length <= 5 ? ' character__card__row--large' : '')" :key="character.id+'-'+'trait-'+trait.id" v-for="trait in characterTraits">
-        <span class="font-sans" v-html="renderIcons(trait.name)"></span>:&nbsp;<span v-html="renderIcons(trait.description)"></span>
+      <p :class="'character__card__row'+(characterTraits.length <= 5 ? ' character__card__row--large' : '')+(trait.added ? ' character__card__row--added' : '')" :key="character.id+'-'+'trait-'+trait.id" v-for="trait in characterTraits">
+        <strong v-if="trait.added">+&nbsp;</strong><span class="font-sans" v-html="renderIcons(trait.name)"></span><span>:&nbsp;</span><span v-html="renderIcons(trait.description)"></span>
       </p>
     </a>
     <a v-if="characterWeaponTraits && characterWeaponTraits.length" href="#" @click.prevent="$emit('click', character)" class="character__card bg-white border border-black">
-      <p class="character__card__row character__card__row--large" :key="character.id+'-'+'weapontrait-'+trait.id" v-for="trait in characterWeaponTraits">
-        <span class="font-sans" v-html="renderIcons(trait.name)"></span>:&nbsp;<span v-html="renderIcons(trait.description)"></span>
+      <p :class="'character__card__row'+(characterWeaponTraits.length <= 6 ? ' character__card__row--large' : '')+(trait.added ? ' character__card__row--added' : '')" :key="character.id+'-'+'weapontrait-'+trait.id" v-for="trait in characterWeaponTraits">
+        <strong v-if="trait.added">+&nbsp;</strong><span class="font-sans" v-html="renderIcons(trait.name)"></span><span>:&nbsp;</span><span v-html="renderIcons(trait.description)"></span>
       </p>
     </a>
     <a v-if="characterEquipment && characterEquipment.length && showEquipmentCard === 1" href="#" @click.prevent="$emit('click', character)" class="character__card bg-white border border-black">
-      <p class="character__card__row character__card__row--large" :key="character.id+'-'+'equipment-'+equipment.id" v-for="equipment in characterEquipment">
-        <span class="font-sans" v-html="renderIcons(equipment.name)"></span>:&nbsp;<span v-html="renderIcons(equipment.description)"></span>
+      <p :class="'character__card__row'+(characterEquipment.length <= 6 ? ' character__card__row--large' : '')+(trait.added ? ' character__card__row--added' : '')" :key="character.id+'-'+'equipment-'+equipment.id" v-for="equipment in characterEquipment">
+        <strong v-if="trait.added">+&nbsp;</strong><span class="font-sans" v-html="renderIcons(equipment.name)"></span><span>:&nbsp;</span><span v-html="renderIcons(equipment.description)"></span>
       </p>
     </a>
   </div>
@@ -168,6 +168,7 @@ export default {
         'blood',
         'card',
         'clock_black_24dp',
+        'crown_icon',
         'eff_blind_icon',
         'eff_cooled_icon',
         'eff_enerv1_icon',
@@ -357,7 +358,9 @@ export default {
               const existingTraitIndex = this.traits.findIndex(currentTrait => currentTrait.id === existingGrantedTrait.id)
 
               if (existingTraitIndex !== -1) {
-                traits.push(this.traits[existingTraitIndex])
+                const existingTrait = {...this.traits[existingTraitIndex]}
+                existingTrait.added = true
+                traits.push(existingTrait)
               }
             }
           }
@@ -373,6 +376,7 @@ export default {
                   if (trait.alternate_name !== null) {
                     existingTrait.name = trait.alternate_name
                   }
+                  existingTrait.added = true
                   traits.push(existingTrait)
                 }
               }
@@ -955,28 +959,34 @@ export default {
     }
 
     &__row {
-      @apply font-serif px-1 mb-1 leading-none;
+      @apply font-serif px-1 leading-none mb-1;
 
-      span {
-        @apply text-xs;
+      span, strong {
+        font-size: 0.8rem;
+        line-height: 0.9;
       }
 
       &--large {
-        span {
-          @apply text-base;
+        @apply mb-2;
+
+        span, strong {
+          @apply text-lg;
+          line-height: 1.1;
         }
       }
+
+      &--added {}
 
       &:first-child {
         @apply mt-1;
       }
 
       img {
-
-        width: 20px;
-        height: 12px;
+        vertical-align: middle;
+        width: 13px;
+        height: 13px;
         object-fit: contain;
-        @apply h-auto inline;
+        @apply inline;
       }
     }
   }

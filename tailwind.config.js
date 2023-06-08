@@ -38,6 +38,10 @@ module.exports = {
             },
             zIndex: {
                 '5': '5'
+            },
+            leading: {
+                'zero': '0',
+                'half': '0.5'
             }
         },
         fontFamily: {

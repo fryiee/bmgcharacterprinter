@@ -7,6 +7,7 @@
         min-height: initial !important;
         overflow-x: initial !important;
         overflow-y: initial !important;
+        height: 100% !important;
     }
 
     main#app {
@@ -14,24 +15,24 @@
     }
 
     .character {
-        display: block !important;
+        display: inline-flex !important;
+        flex-wrap: wrap;
         break-inside: avoid;
 
         &:not(:first-child) {
             .character__card__container {
-                break-before: page !important;
             }
         }
     }
 
     .character__card__container {
         break-inside: avoid;
-        display: block !important;
+        display: inline-block !important;
     }
 
     .character__card {
         break-inside: avoid;
-        display: block !important;
+        display: inline-block !important;
     }
 
     .noprint {
