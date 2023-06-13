@@ -18,6 +18,7 @@
         display: inline-flex !important;
         flex-wrap: wrap;
         break-inside: avoid;
+        margin-bottom: 3rem;
 
         &:not(:first-child) {
             .character__card__container {
@@ -28,6 +29,13 @@
     .character__card__container {
         break-inside: avoid;
         display: inline-block !important;
+    }
+
+    .character__expander {
+        display: inline-flex !important;
+        flex-wrap: wrap;
+        height: auto !important;
+        padding: 0 !important;
     }
 
     .character__card {

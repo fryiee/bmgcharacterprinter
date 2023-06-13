@@ -1,139 +1,145 @@
 <template>
   <div class="character">
+    <a href="#" @click.prevent="expanded = !expanded" :class="'w-full noprint px-6 py-2 bg-yellow-400 flex items-center justify-start border-b-2 border-black'+(index === 1 ? ' border-t-2' : '')">
+      <font-awesome-icon icon="chevron-down" size="lg" :class="expanded ? 'transform rotate-180' : ''"></font-awesome-icon>
+      <h2 class="text-3xl font-sans ml-2 mb-0 leading-none">{{index}}. {{character.alias}} ({{character.name}})</h2>
+    </a>
 
-    <div class="flex flex-col character__card__container">
-      <a href="#" @click.prevent="$emit('click', character)" class="character__card" :style="backgroundStyle">
-        <span class="character__card__version">{{version}}&nbsp;&copy;{{nowYear}} Knight Models.</span>
-        <div class="character__card__banner">
-          <div class="character__card__banner__name">
-            <h4>{{character.alias}}</h4>
-            <h5>{{character.name}} / {{character.bases_size}}</h5>
-          </div>
-          <div class="character__card__banner__pod">
-            <small class="character__card__banner__pod__title">Rank</small>
-            <div class="character__card__banner__pod__images">
-              <img v-for="rank in characterRanks" :key="character.id+'-'+'rank-'+rank.id" :alt="rank.icon" :src="'dist/img/icons/' + rank.icon + '.svg'"/>
+    <div :class="'character__expander'+(expanded ? ' character__expander--expanded' : '')">
+      <div class="flex flex-col character__card__container">
+        <a href="#" @click.prevent="$emit('click', character)" class="character__card" :style="backgroundStyle">
+          <span class="character__card__version">{{version}}&nbsp;&copy;{{nowYear}} Knight Models.</span>
+          <div class="character__card__banner">
+            <div class="character__card__banner__name">
+              <h4>{{character.alias}}</h4>
+              <h5>{{character.name}} / {{character.bases_size}}</h5>
             </div>
-          </div>
-          <div class="character__card__banner__pod">
-            <small class="character__card__banner__pod__title">Aff</small>
-            <div class="character__card__banner__pod__images">
-              <div v-if="affiliation.is_team === false" v-for="affiliation in characterAffiliations" :key="character.id+'-'+'affiliation-'+affiliation.id" class="character__card__banner__pod__image--dark img" :style="'background-image:url('+affiliation.icon+');'"></div>
+            <div class="character__card__banner__pod">
+              <small class="character__card__banner__pod__title">Rank</small>
+              <div class="character__card__banner__pod__images">
+                <img v-for="rank in characterRanks" :key="character.id+'-'+'rank-'+rank.id" :alt="rank.icon" :src="'dist/img/icons/' + rank.icon + '.svg'"/>
+              </div>
             </div>
-          </div>
-          <div class="character__card__banner__pod">
-            <small class="character__card__banner__pod__title">Riv</small>
-            <div class="character__card__banner__pod__images">
-              <div v-for="affiliation in characterRivals" :key="character.id+'-'+'rival-'+affiliation.id" class="character__card__banner__pod__image--dark img" :style="'background-image:url('+affiliation.icon+');'"></div>
+            <div class="character__card__banner__pod">
+              <small class="character__card__banner__pod__title">Aff</small>
+              <div class="character__card__banner__pod__images">
+                <div v-if="affiliation.is_team === false" v-for="affiliation in characterAffiliations" :key="character.id+'-'+'affiliation-'+affiliation.id" class="character__card__banner__pod__image--dark img" :style="'background-image:url('+affiliation.icon+');'"></div>
+              </div>
             </div>
-          </div>
-          <div class="character__card__banner__pod character__card__banner__pod--col character__card__banner__pod--center">
-            <span class="character__card__banner__pod__text">{{character.reputation}} rep</span>
-            <span class="character__card__banner__pod__text">{{character.funding}} $</span>
-          </div>
-        </div>
-
-        <div class="character__card__stats">
-          <div class="character__card__stats__damage">
-            <div class="character__card__stats__damage__pod">
-              <img src="dist/img/icons/background_willpower.svg" alt="background_willpower icon" class="character__card__stats__damage__pod__image"/>
-              <h3>{{character.willpower}}</h3>
-              <h4>Willpower</h4>
+            <div class="character__card__banner__pod">
+              <small class="character__card__banner__pod__title">Riv</small>
+              <div class="character__card__banner__pod__images">
+                <div v-for="affiliation in characterRivals" :key="character.id+'-'+'rival-'+affiliation.id" class="character__card__banner__pod__image--dark img" :style="'background-image:url('+affiliation.icon+');'"></div>
+              </div>
             </div>
-
-            <div class="character__card__stats__damage__pod character__card__stats__damage__pod--dark">
-              <img src="dist/img/icons/background_endurance.png" alt="background_endurance icon" class="character__card__stats__damage__pod__image"/>
-              <h3>{{character.endurance}}</h3>
-              <h4>Endurance</h4>
+            <div class="character__card__banner__pod character__card__banner__pod--col character__card__banner__pod--center">
+              <span class="character__card__banner__pod__text">{{character.reputation}} rep</span>
+              <span class="character__card__banner__pod__text">{{character.funding}} $</span>
             </div>
           </div>
 
-          <div class="character__card__stats__row character__card__stats__row--1">
-            <div class="character__card__stats__row__pod">
-              <img src="dist/img/icons/background_attack.svg" alt="background_attack icon"/>
-              <span>{{character.attack}}</span>
-            </div>
-            <div class="character__card__stats__row__pod">
-              <img src="dist/img/icons/background_defense.svg" alt="background_defense icon"/>
-              <span>{{character.defense}}</span>
-            </div>
-          </div>
-          <div class="character__card__stats__row character__card__stats__row--2">
-            <div class="character__card__stats__row__pod">
-              <img src="dist/img/icons/background_strength.svg" alt="strength icon"/>
-              <span>{{character.strength}}+</span>
-            </div>
-            <div class="character__card__stats__row__pod">
-              <img src="dist/img/icons/background_movement.svg" alt="movement icon"/>
-              <span>{{character.movement}}</span>
-            </div>
-            <div class="character__card__stats__row__pod">
-              <img src="dist/img/icons/background_special.svg" alt="special icon"/>
-              <span>{{character.special}}</span>
-            </div>
-          </div>
-        </div>
+          <div class="character__card__stats">
+            <div class="character__card__stats__damage">
+              <div class="character__card__stats__damage__pod">
+                <img src="dist/img/icons/background_willpower.svg" alt="background_willpower icon" class="character__card__stats__damage__pod__image"/>
+                <h3>{{character.willpower}}</h3>
+                <h4>Willpower</h4>
+              </div>
 
-        <div class="character__card__middle__banner">
-          <div v-for="weapon in characterWeaponsWithTraitNames" :key="character.id+'-'+'weapon-'+weapon.id" class="character__card__middle__banner__row">
-            <span class="character__card__middle__banner__row__tag character__card__middle__banner__row__title">{{weapon.name}}</span>
-            <span class="character__card__middle__banner__row__tag character__card__middle__banner__row__damage">
+              <div class="character__card__stats__damage__pod character__card__stats__damage__pod--dark">
+                <img src="dist/img/icons/background_endurance.png" alt="background_endurance icon" class="character__card__stats__damage__pod__image"/>
+                <h3>{{character.endurance}}</h3>
+                <h4>Endurance</h4>
+              </div>
+            </div>
+
+            <div class="character__card__stats__row character__card__stats__row--1">
+              <div class="character__card__stats__row__pod">
+                <img src="dist/img/icons/background_attack.svg" alt="background_attack icon"/>
+                <span>{{character.attack}}</span>
+              </div>
+              <div class="character__card__stats__row__pod">
+                <img src="dist/img/icons/background_defense.svg" alt="background_defense icon"/>
+                <span>{{character.defense}}</span>
+              </div>
+            </div>
+            <div class="character__card__stats__row character__card__stats__row--2">
+              <div class="character__card__stats__row__pod">
+                <img src="dist/img/icons/background_strength.svg" alt="strength icon"/>
+                <span>{{character.strength}}+</span>
+              </div>
+              <div class="character__card__stats__row__pod">
+                <img src="dist/img/icons/background_movement.svg" alt="movement icon"/>
+                <span>{{character.movement}}</span>
+              </div>
+              <div class="character__card__stats__row__pod">
+                <img src="dist/img/icons/background_special.svg" alt="special icon"/>
+                <span>{{character.special}}</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="character__card__middle__banner">
+            <div v-for="weapon in characterWeaponsWithTraitNames" :key="character.id+'-'+'weapon-'+weapon.id" class="character__card__middle__banner__row">
+              <span class="character__card__middle__banner__row__tag character__card__middle__banner__row__title">{{weapon.name}}</span>
+              <span class="character__card__middle__banner__row__tag character__card__middle__banner__row__damage">
               <template v-if="weapon.damage">
               <img v-for="(damage, index) in weaponDamage(weapon)" :key="character.id+'-'+damage.icon+'-'+index" :alt="damage.icon" :src="'dist/img/icons/' + damage.icon + '.svg'"/>
               </template>
               <template v-else>-</template>
             </span>
-            <span class="character__card__middle__banner__row__tag character__card__middle__banner__row__rof">
+              <span class="character__card__middle__banner__row__tag character__card__middle__banner__row__rof">
               <template v-if="weapon.rate_of_fire">
                 <span>{{weapon.rate_of_fire}}&nbsp;</span><img src="dist/img/icons/yellow_rof_icon.svg" alt="ROF icon"/>
               </template>
               <template v-else><span>-</span></template>
             </span>
-            <span class="character__card__middle__banner__row__tag character__card__middle__banner__row__ammo">
+              <span class="character__card__middle__banner__row__tag character__card__middle__banner__row__ammo">
               <template v-if="weapon.ammunition">
                 <span>{{weapon.ammunition}}&nbsp;</span><img src="dist/img/icons/yellow_ammo_icon.svg" alt="Ammo icon"/>
               </template>
               <template v-else><span>-</span></template>
             </span>
-            <span class="character__card__middle__banner__row__tag character__card__middle__banner__row__traits">{{weapon.trait_names.join(' / ')}}</span>
+              <span class="character__card__middle__banner__row__tag character__card__middle__banner__row__traits">{{weapon.trait_names.join(' / ')}}</span>
+            </div>
           </div>
-        </div>
 
-        <div class="character__card__bottom__banner">
-          <span class="character__card__bottom__banner__tag" v-html="renderIcons(trait.name)" v-for="trait in characterTraits"></span>
+          <div class="character__card__bottom__banner">
+            <span class="character__card__bottom__banner__tag" v-html="renderIcons(trait.name)" v-for="trait in characterTraits"></span>
+          </div>
+        </a>
+      </div>
+      <div class="character__card bg-white border border-black noprint">
+        <div class="character__options">
+          <h4 class="text-3xl mb-2">Equipment</h4>
+          <span v-for="equipment in availableEquipment" class="text-lg leading-none mb-1">
+            <input type="checkbox" :value="equipment.id" @input="toggleEquipment(equipment.id)" class="w-5 h-5"/>&nbsp;{{equipment.name}}
+          </span>
         </div>
+      </div>
+      <a href="#" @click.prevent="$emit('click', character)" class="character__card bg-white border border-black">
+        <p :class="'character__card__row'+(characterTraits.length <= 5 ? ' character__card__row--large' : '')+(trait.added ? ' character__card__row--added' : '')" :key="character.id+'-'+'trait-'+trait.id" v-for="trait in characterTraits">
+          <strong v-if="trait.added">+&nbsp;</strong><span class="font-sans" v-html="renderIcons(trait.name)"></span><span>:&nbsp;</span><span v-html="renderIcons(trait.description)"></span>
+        </p>
+      </a>
+      <a v-if="characterWeaponTraits && characterWeaponTraits.length" href="#" @click.prevent="$emit('click', character)" class="character__card bg-white border border-black">
+        <p :class="'character__card__row'+(characterWeaponTraits.length <= 6 ? ' character__card__row--large' : '')+(trait.added ? ' character__card__row--added' : '')" :key="character.id+'-'+'weapontrait-'+trait.id" v-for="trait in characterWeaponTraits">
+          <strong v-if="trait.added">+&nbsp;</strong><span class="font-sans" v-html="renderIcons(trait.name)"></span><span>:&nbsp;</span><span v-html="renderIcons(trait.description)"></span>
+        </p>
+      </a>
+      <a v-if="characterEquipment && characterEquipment.length && showEquipmentCard === 1" href="#" @click.prevent="$emit('click', character)" class="character__card bg-white border border-black">
+        <p :class="'character__card__row'+(characterEquipment.length <= 6 ? ' character__card__row--large' : '')+(equipment.added ? ' character__card__row--added' : '')" :key="character.id+'-'+'equipment-'+equipment.id" v-for="equipment in characterEquipment">
+          <strong v-if="equipment.added">+&nbsp;</strong><span class="font-sans" v-html="renderIcons(equipment.name)"></span><span>:&nbsp;</span><span v-html="renderIcons(equipment.description)"></span>
+        </p>
       </a>
     </div>
-    <div class="character__card bg-white border border-black noprint">
-      <div class="character__options">
-        <h4 class="text-2xl mb-2">Equipment</h4>
-        <span v-for="equipment in availableEquipment">
-          <input type="checkbox" :value="equipment.id" @input="toggleEquipment(equipment.id)"/>&nbsp;{{equipment.name}}
-        </span>
-      </div>
-    </div>
-    <a href="#" @click.prevent="$emit('click', character)" class="character__card bg-white border border-black">
-      <p :class="'character__card__row'+(characterTraits.length <= 5 ? ' character__card__row--large' : '')+(trait.added ? ' character__card__row--added' : '')" :key="character.id+'-'+'trait-'+trait.id" v-for="trait in characterTraits">
-        <strong v-if="trait.added">+&nbsp;</strong><span class="font-sans" v-html="renderIcons(trait.name)"></span><span>:&nbsp;</span><span v-html="renderIcons(trait.description)"></span>
-      </p>
-    </a>
-    <a v-if="characterWeaponTraits && characterWeaponTraits.length" href="#" @click.prevent="$emit('click', character)" class="character__card bg-white border border-black">
-      <p :class="'character__card__row'+(characterWeaponTraits.length <= 6 ? ' character__card__row--large' : '')+(trait.added ? ' character__card__row--added' : '')" :key="character.id+'-'+'weapontrait-'+trait.id" v-for="trait in characterWeaponTraits">
-        <strong v-if="trait.added">+&nbsp;</strong><span class="font-sans" v-html="renderIcons(trait.name)"></span><span>:&nbsp;</span><span v-html="renderIcons(trait.description)"></span>
-      </p>
-    </a>
-    <a v-if="characterEquipment && characterEquipment.length && showEquipmentCard === 1" href="#" @click.prevent="$emit('click', character)" class="character__card bg-white border border-black">
-      <p :class="'character__card__row'+(characterEquipment.length <= 6 ? ' character__card__row--large' : '')+(equipment.added ? ' character__card__row--added' : '')" :key="character.id+'-'+'equipment-'+equipment.id" v-for="equipment in characterEquipment">
-        <strong v-if="equipment.added">+&nbsp;</strong><span class="font-sans" v-html="renderIcons(equipment.name)"></span><span>:&nbsp;</span><span v-html="renderIcons(equipment.description)"></span>
-      </p>
-    </a>
   </div>
 </template>
 
 <script>
 export default {
   name: 'Character',
-  props: ['character', 'affiliations', 'traits', 'equipment', 'upgrades', 'weapons', 'crew', 'version', 'eternal', 'showEquipmentCard', 'allSelectedCharacters', 'grantedTraits'],
+  props: ['character', 'index', 'affiliations', 'traits', 'equipment', 'upgrades', 'weapons', 'crew', 'version', 'eternal', 'showEquipmentCard', 'allSelectedCharacters', 'grantedTraits'],
   data() {
     return {
       icons: [
@@ -282,7 +288,8 @@ export default {
           icon: 'stun'
         }
       ],
-      selectedEquipment: []
+      selectedEquipment: [],
+      expanded: false
     }
   },
   computed: {
@@ -675,6 +682,14 @@ export default {
 <style>
 .character {
   @apply flex flex-row w-full items-start justify-start flex-wrap;
+
+  &__expander {
+    @apply w-full hidden flex-row items-start justify-start flex-wrap;
+
+    &--expanded {
+      @apply flex py-6;
+    }
+  }
 
   &__options {
     @apply flex flex-col flex-wrap w-full h-full p-1;

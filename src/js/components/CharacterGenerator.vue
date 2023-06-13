@@ -8,20 +8,19 @@
         <h1 class="text-4xl">Loading...</h1>
       </div>
       <template v-else>
-        <div class="flex flex-row items-center justify-between bg-yellow-400 mb-4 noprint p-6">
+        <div class="flex flex-row items-center justify-between bg-yellow-400 mb-4 noprint p-6 border-black border-b-2">
           <div class="flex flex-col">
             <h1 class="text-4xl mb-1">Batman Miniature Game Crew Sheet Generator</h1>
             <h5 v-if="version" class="font-sans text-sm">Game Data Version: {{formattedVersion}} ({{version}})</h5>
-            <h5 class="mt-1 font-sans text-sm">Recommended print settings to match KM sized cards: <span class="underline">A4 / Portrait / Scale: 50% / Margins: Minimal</span></h5>
           </div>
           <div class="flex flex-col items-end">
             <h2 class="font-sans text-lg leading-none mb-1">Eternal? <input type="checkbox" :value="eternal" :checked="eternal" @input="toggleEternal"/></h2>
             <h2 class="font-sans text-lg leading-none">Show separate equipment card? <input type="checkbox" :value="showEquipmentCard" :checked="showEquipmentCard" @input="toggleEquipmentCard"/></h2>
           </div>
         </div>
-        <div class="flex flex-col noprint mb-12 p-6">
+        <div class="flex flex-col noprint mb-6 p-6">
           <h2 class="text-3xl font-sans mb-2">1. Select Crew</h2>
-          <a href="#" @click.prevent="crewInputExpanded = !crewInputExpanded" v-if="crew" class="border-2 inline-flex items-center justify-start border-yellow-400 w-auto self-start px-3 py-2">
+          <a href="#" @click.prevent="crewInputExpanded = !crewInputExpanded" v-if="crew" class="border-2 inline-flex items-center justify-start border-black bg-yellow-400 w-auto self-start px-3 py-2">
             <h3 class="font-sans text-2xl">{{crew.name}}</h3>
             <font-awesome-icon icon="chevron-down" size="lg" :class="'ml-2 transform'+(crewInputExpanded ? ' rotate-180' : '')"></font-awesome-icon>
           </a>
@@ -34,7 +33,15 @@
           </div>
         </div>
         <div class="flex flex-col">
-          <character :character="character" v-for="character in characters_to_print" :all-selected-characters="characters_to_print" :granted-traits="grantedTraits" :key="character.id" :crew="crew" :version="formattedVersion" :affiliations="affiliations" :traits="traits" :equipment="equipment" :upgrades="upgrades" :weapons="weapons" :show-equipment-card="showEquipmentCard" @click="removeCharacter"></character>
+          <div v-if="characters_to_print.length" class="noprint px-6">
+            <h2 class="text-3xl font-sans mb-2">3. Customise Characters</h2>
+          </div>
+          <character :character="character" :index="index + 1" v-for="(character, index) in characters_to_print" :all-selected-characters="characters_to_print" :granted-traits="grantedTraits" :key="character.id" :crew="crew" :version="formattedVersion" :affiliations="affiliations" :traits="traits" :equipment="equipment" :upgrades="upgrades" :weapons="weapons" :show-equipment-card="showEquipmentCard" @click="removeCharacter"></character>
+        </div>
+        <div v-if="characters_to_print.length" class="flex flex-col noprint p-6 mt-4">
+          <h2 class="text-3xl font-sans mb-2">4. Print Sheet</h2>
+          <p class="font-serif text-lg">Use your browser's print dialog or click <a href="#" @click.prevent="openPrintDialog" class="font-bold underline">here</a>.</p>
+          <p class="font-serif text-lg">Recommended print settings to match KM sized cards: <span class="underline">A4 / Portrait / Scale: 50% / Margins: Minimal</span></p>
         </div>
       </template>
     </template>
@@ -203,6 +210,11 @@ export default {
     }
   },
   methods: {
+    openPrintDialog () {
+      if (window) {
+        window.print()
+      }
+    },
     searchCharacters(input) {
       if (input.length < 1) { return [] }
       if (!this.characters) { return [] }
@@ -341,10 +353,6 @@ export default {
 <style>
 .character-generator {
   @apply h-full;
-
-  .character {
-    @apply mb-12;
-  }
 
   &__error {
     @apply text-2xl;
