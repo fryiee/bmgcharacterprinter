@@ -5,25 +5,32 @@
     </p>
     <template v-else>
       <div v-if="!loaded" class="flex flex-col noprint p-6">
-        <h2 class="text-3xl">Loading...</h2>
+        <h1 class="text-4xl">Loading...</h1>
       </div>
       <template v-else>
-        <div class="flex flex-col noprint mb-20 p-6">
-          <h1 class="text-4xl mb-4">Batman Miniature Game Character Printer</h1>
-          <h2 v-if="version" class="font-serif text-2xl mb-3">Game Data Version: <strong class="font-sans">{{formattedVersion}} ({{version}})</strong></h2>
-          <h2 class="font-serif text-2xl mb-2">Eternal: <input type="checkbox" :value="eternal" :checked="eternal" @input="toggleEternal"/></h2>
-          <h2 class="font-serif text-2xl mb-3">Show separate equipment card? <input type="checkbox" :value="showEquipmentCard" :checked="showEquipmentCard" @input="toggleEquipmentCard"/></h2>
-          <p v-if="!crew" class="font-serif text-xl mb-6">Select your crew to populate equipment choices.</p>
-          <a href="#" @click.prevent="crewInputExpanded = !crewInputExpanded" v-if="crew">
-            <h3 class="font-serif text-2xl">Crew: <strong class="font-sans">{{crew.name}}</strong></h3>
+        <div class="flex flex-row items-center justify-between bg-yellow-400 mb-4 noprint p-6">
+          <div class="flex flex-col">
+            <h1 class="text-4xl mb-1">Batman Miniature Game Crew Sheet Generator</h1>
+            <h5 v-if="version" class="font-sans text-sm">Game Data Version: {{formattedVersion}} ({{version}})</h5>
+            <h5 class="mt-1 font-sans text-sm">Recommended print settings to match KM sized cards: <span class="underline">A4 / Portrait / Scale: 50% / Margins: Minimal</span></h5>
+          </div>
+          <div class="flex flex-col items-end">
+            <h2 class="font-sans text-lg leading-none mb-1">Eternal? <input type="checkbox" :value="eternal" :checked="eternal" @input="toggleEternal"/></h2>
+            <h2 class="font-sans text-lg leading-none">Show separate equipment card? <input type="checkbox" :value="showEquipmentCard" :checked="showEquipmentCard" @input="toggleEquipmentCard"/></h2>
+          </div>
+        </div>
+        <div class="flex flex-col noprint mb-12 p-6">
+          <h2 class="text-3xl font-sans mb-2">1. Select Crew</h2>
+          <a href="#" @click.prevent="crewInputExpanded = !crewInputExpanded" v-if="crew" class="border-2 inline-flex items-center justify-start border-yellow-400 w-auto self-start px-3 py-2">
+            <h3 class="font-sans text-2xl">{{crew.name}}</h3>
+            <font-awesome-icon icon="chevron-down" size="lg" :class="'ml-2 transform'+(crewInputExpanded ? ' rotate-180' : '')"></font-awesome-icon>
           </a>
-          <div class="relative z-10">
-            <autocomplete v-if="!crew || crewInputExpanded" ref="crewAutocomplete" key="crewAutocompleteField" :search="searchCrews" :get-result-value="getCrewResultValue" @submit="selectCrew" class="mb-8"></autocomplete>
+          <div v-if="!crew || crewInputExpanded" class="relative z-10">
+            <autocomplete ref="crewAutocomplete" key="crewAutocompleteField" :search="searchCrews" :get-result-value="getCrewResultValue" @submit="selectCrew" placeholder="Search for crews by name" class="mt-4 mb-0"></autocomplete>
           </div>
           <div class="mt-10 relative z-5" v-if="crew">
-            <p class="font-serif text-xl mb-6">Search for characters below and click to add them to your print sheet. Click to remove them.</p>
-            <autocomplete :search="searchCharacters" key="characterAutocompleteField" ref="characterAutocomplete" :get-result-value="getResultValue" @submit="addCharacter"></autocomplete>
-            <p class="mt-6 font-serif text-lg">Recommended print settings to match KM sized cards: <strong>A4 / Portrait / Scale: 50% / Margins: Minimal</strong></p>
+            <h2 class="text-3xl font-sans mb-2">2. Add Characters</h2>
+            <autocomplete :search="searchCharacters" placeholder="Search for characters and click to add. Click the card to remove." key="characterAutocompleteField" ref="characterAutocomplete" :get-result-value="getResultValue" @submit="addCharacter"></autocomplete>
           </div>
         </div>
         <div class="flex flex-col">

@@ -123,8 +123,8 @@
       </p>
     </a>
     <a v-if="characterEquipment && characterEquipment.length && showEquipmentCard === 1" href="#" @click.prevent="$emit('click', character)" class="character__card bg-white border border-black">
-      <p :class="'character__card__row'+(characterEquipment.length <= 6 ? ' character__card__row--large' : '')+(trait.added ? ' character__card__row--added' : '')" :key="character.id+'-'+'equipment-'+equipment.id" v-for="equipment in characterEquipment">
-        <strong v-if="trait.added">+&nbsp;</strong><span class="font-sans" v-html="renderIcons(equipment.name)"></span><span>:&nbsp;</span><span v-html="renderIcons(equipment.description)"></span>
+      <p :class="'character__card__row'+(characterEquipment.length <= 6 ? ' character__card__row--large' : '')+(equipment.added ? ' character__card__row--added' : '')" :key="character.id+'-'+'equipment-'+equipment.id" v-for="equipment in characterEquipment">
+        <strong v-if="equipment.added">+&nbsp;</strong><span class="font-sans" v-html="renderIcons(equipment.name)"></span><span>:&nbsp;</span><span v-html="renderIcons(equipment.description)"></span>
       </p>
     </a>
   </div>
