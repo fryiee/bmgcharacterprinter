@@ -122,7 +122,7 @@
           <strong v-if="trait.added">+&nbsp;</strong><span class="font-sans" v-html="renderIcons(trait.name)"></span><span>:&nbsp;</span><span v-html="renderIcons(trait.description)"></span>
         </p>
       </a>
-      <a v-if="characterWeaponTraits && characterWeaponTraits.length" href="#" @click.prevent="$emit('click', character)" class="character__card bg-white border border-black">
+      <a v-if="characterWeaponTraits && characterWeaponTraits.length && showWeaponTraitsCard === 1" href="#" @click.prevent="$emit('click', character)" class="character__card bg-white border border-black">
         <p :class="'character__card__row'+(characterWeaponTraits.length <= 6 ? ' character__card__row--large' : '')+(trait.added ? ' character__card__row--added' : '')" :key="character.id+'-'+'weapontrait-'+trait.id" v-for="trait in characterWeaponTraits">
           <strong v-if="trait.added">+&nbsp;</strong><span class="font-sans" v-html="renderIcons(trait.name)"></span><span>:&nbsp;</span><span v-html="renderIcons(trait.description)"></span>
         </p>
@@ -139,7 +139,7 @@
 <script>
 export default {
   name: 'Character',
-  props: ['character', 'index', 'affiliations', 'traits', 'equipment', 'upgrades', 'weapons', 'crew', 'version', 'eternal', 'showEquipmentCard', 'allSelectedCharacters', 'grantedTraits'],
+  props: ['character', 'index', 'affiliations', 'traits', 'equipment', 'upgrades', 'weapons', 'crew', 'version', 'eternal', 'showEquipmentCard', 'showWeaponTraitsCard', 'allSelectedCharacters', 'grantedTraits'],
   data() {
     return {
       icons: [

@@ -15,6 +15,7 @@
           </div>
           <div class="flex flex-col items-end">
             <h2 class="font-sans text-lg leading-none mb-1">Eternal? <input type="checkbox" :value="eternal" :checked="eternal" @input="toggleEternal"/></h2>
+            <h2 class="font-sans text-lg leading-none mb-1">Show separate weapon traits card? <input type="checkbox" :value="showWeaponTraitsCard" :checked="showWeaponTraitsCard" @input="toggleWeaponTraitsCard"/></h2>
             <h2 class="font-sans text-lg leading-none">Show separate equipment card? <input type="checkbox" :value="showEquipmentCard" :checked="showEquipmentCard" @input="toggleEquipmentCard"/></h2>
           </div>
         </div>
@@ -36,7 +37,7 @@
           <div v-if="characters_to_print.length" class="noprint px-6">
             <h2 class="text-3xl font-sans mb-2">3. Customise Characters</h2>
           </div>
-          <character :character="character" :index="index + 1" v-for="(character, index) in characters_to_print" :all-selected-characters="characters_to_print" :granted-traits="grantedTraits" :key="character.id" :crew="crew" :version="formattedVersion" :affiliations="affiliations" :traits="traits" :equipment="equipment" :upgrades="upgrades" :weapons="weapons" :show-equipment-card="showEquipmentCard" @click="removeCharacter"></character>
+          <character :character="character" :index="index + 1" v-for="(character, index) in characters_to_print" :all-selected-characters="characters_to_print" :granted-traits="grantedTraits" :key="character.id" :crew="crew" :version="formattedVersion" :affiliations="affiliations" :traits="traits" :equipment="equipment" :upgrades="upgrades" :weapons="weapons" :show-equipment-card="showEquipmentCard" :show-weapon-traits-card="showWeaponTraitsCard" @click="removeCharacter"></character>
         </div>
         <div v-if="characters_to_print.length" class="flex flex-col noprint p-6 mt-4">
           <h2 class="text-3xl font-sans mb-2">4. Print Sheet</h2>
@@ -60,6 +61,7 @@ export default {
       version: null,
       eternal: 0,
       showEquipmentCard: 0,
+      showWeaponTraitsCard: 0,
       crew: null,
       crewInputExpanded: false,
       characters_to_print: [],
@@ -182,6 +184,7 @@ export default {
             this.loadCurrentCrew()
             this.loadEternalToggle()
             this.loadEquipmentCardToggle()
+            this.loadWeaponTraitsCardToggle()
             this.loadCurrentCharacters()
           } else {
             this.error = true
@@ -196,6 +199,7 @@ export default {
             this.loadCurrentCrew()
             this.loadEternalToggle()
             this.loadEquipmentCardToggle()
+            this.loadWeaponTraitsCardToggle()
             this.loadCurrentCharacters()
           } else {
             this.error = true
@@ -345,6 +349,13 @@ export default {
     toggleEquipmentCard () {
       this.showEquipmentCard = this.showEquipmentCard === 1 ? 0 : 1
       window.localStorage.setItem('showEquipmentCard', this.showEquipmentCard)
+    },
+    loadWeaponTraitsCardToggle() {
+      this.showWeaponTraitsCard = parseInt(window.localStorage.getItem('showWeaponTraitsCard'))
+    },
+    toggleWeaponTraitsCard () {
+      this.showWeaponTraitsCard = this.showWeaponTraitsCard === 1 ? 0 : 1
+      window.localStorage.setItem('showWeaponTraitsCard', this.showWeaponTraitsCard)
     }
   }
 }
