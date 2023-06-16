@@ -1,8 +1,17 @@
 <template>
   <div class="character">
-    <a href="#" @click.prevent="expanded = !expanded" :class="'w-full noprint px-6 py-2 bg-yellow-400 flex items-center justify-start border-b-2 border-black'+(index === 1 ? ' border-t-2' : '')">
+    <a href="#" @click.prevent="toggleExpand" :class="'w-full noprint px-6 py-2 bg-yellow-400 flex items-center justify-start border-b-2 border-black'+(index === 1 ? ' border-t-2' : '')">
       <font-awesome-icon icon="chevron-down" size="lg" :class="expanded ? 'transform rotate-180' : ''"></font-awesome-icon>
       <h2 class="text-3xl font-sans ml-2 mb-0 leading-none">{{index}}. {{character.alias}} ({{character.name}})</h2>
+      <div class="ml-auto inline-flex items-center justify-end">
+        <template v-if="determinedSizingAtLeastOnce === false">
+          <h2 class="text-lg leading-none font-sans text-red-500 mr-2">We haven't automatically resized this character's cards. Expand the character at least once to properly size your cards.</h2>
+          <font-awesome-icon icon="times-circle" class="text-red-500 fill-current" size="lg"></font-awesome-icon>
+        </template>
+        <template v-else>
+          <font-awesome-icon icon="check-circle" class="text-green-500 fill-current" size="lg"></font-awesome-icon>
+        </template>
+      </div>
     </a>
 
     <div :class="'character__expander'+(expanded ? ' character__expander--expanded' : '')">
@@ -115,20 +124,27 @@
           <span v-for="equipment in availableEquipment" class="text-lg leading-none mb-1">
             <input type="checkbox" :value="equipment.id" @input="toggleEquipment(equipment.id)" class="w-5 h-5"/>&nbsp;{{equipment.name}}
           </span>
+          <template v-if="loading">
+            <hr class="my-4 border-black px-4">
+            <div class="flex items-center justify-start">
+              <font-awesome-icon icon="spinner" size="2x" class="animate-spin fill-current text-black"></font-awesome-icon>
+              <h4 class="ml-4 text-3xl">Configuring card size...</h4>
+            </div>
+          </template>
         </div>
       </div>
-      <a href="#" @click.prevent="$emit('click', character)" class="character__card bg-white border border-black">
-        <p :class="'character__card__row'+(characterTraits.length <= 5 ? ' character__card__row--large' : '')+(trait.added ? ' character__card__row--added' : '')" :key="character.id+'-'+'trait-'+trait.id" v-for="trait in characterTraits">
+      <a ref="traitHeightDeterminer" href="#" @click.prevent="$emit('click', character)" class="character__card character__card__height-determiner bg-white border border-black">
+        <p :class="'character__card__row'+(trait.added ? ' character__card__row--added' : '')" :key="character.id+'-'+'trait-'+trait.id" v-for="trait in characterTraits" :style="'font-size: '+currentTraitFontSize+'px'">
           <strong v-if="trait.added">+&nbsp;</strong><span class="font-sans" v-html="renderIcons(trait.name)"></span><span>:&nbsp;</span><span v-html="renderIcons(trait.description)"></span>
         </p>
       </a>
-      <a v-if="characterWeaponTraits && characterWeaponTraits.length && showWeaponTraitsCard === 1" href="#" @click.prevent="$emit('click', character)" class="character__card bg-white border border-black">
-        <p :class="'character__card__row'+(characterWeaponTraits.length <= 6 ? ' character__card__row--large' : '')+(trait.added ? ' character__card__row--added' : '')" :key="character.id+'-'+'weapontrait-'+trait.id" v-for="trait in characterWeaponTraits">
+      <a ref="weaponTraitHeightDeterminer" v-if="characterWeaponTraits && characterWeaponTraits.length && showWeaponTraitsCard === 1" href="#" @click.prevent="$emit('click', character)" class="character__card character__card__height-determiner bg-white border border-black">
+        <p :class="'character__card__row'+(trait.added ? ' character__card__row--added' : '')" :key="character.id+'-'+'weapontrait-'+trait.id" v-for="trait in characterWeaponTraits" :style="'font-size: '+currentWeaponTraitFontSize+'px'">
           <strong v-if="trait.added">+&nbsp;</strong><span class="font-sans" v-html="renderIcons(trait.name)"></span><span>:&nbsp;</span><span v-html="renderIcons(trait.description)"></span>
         </p>
       </a>
-      <a v-if="characterEquipment && characterEquipment.length && showEquipmentCard === 1" href="#" @click.prevent="$emit('click', character)" class="character__card bg-white border border-black">
-        <p :class="'character__card__row'+(characterEquipment.length <= 6 ? ' character__card__row--large' : '')+(equipment.added ? ' character__card__row--added' : '')" :key="character.id+'-'+'equipment-'+equipment.id" v-for="equipment in characterEquipment">
+      <a ref="equipmentHeightDeterminer" v-if="characterEquipment && characterEquipment.length && showEquipmentCard === 1" href="#" @click.prevent="$emit('click', character)" class="character__card character__card__height-determiner bg-white border border-black">
+        <p :class="'character__card__row'+(equipment.added ? ' character__card__row--added' : '')" :key="character.id+'-'+'equipment-'+equipment.id" v-for="equipment in characterEquipment" :style="'font-size: '+currentEquipmentFontSize+'px'">
           <strong v-if="equipment.added">+&nbsp;</strong><span class="font-sans" v-html="renderIcons(equipment.name)"></span><span>:&nbsp;</span><span v-html="renderIcons(equipment.description)"></span>
         </p>
       </a>
@@ -139,7 +155,7 @@
 <script>
 export default {
   name: 'Character',
-  props: ['character', 'index', 'affiliations', 'traits', 'equipment', 'upgrades', 'weapons', 'crew', 'version', 'eternal', 'showEquipmentCard', 'showWeaponTraitsCard', 'allSelectedCharacters', 'grantedTraits'],
+  props: ['character', 'index', 'affiliations', 'traits', 'equipment', 'upgrades', 'weapons', 'crew', 'version', 'eternal', 'showEquipmentCard', 'showWeaponTraitsCard', 'combineAllCards', 'allSelectedCharacters', 'grantedTraits'],
   data() {
     return {
       icons: [
@@ -289,7 +305,50 @@ export default {
         }
       ],
       selectedEquipment: [],
-      expanded: false
+      expanded: false,
+      lowerFontSizeLimit: 12,
+      upperFontSizeLimit: 20,
+      currentTraitFontSize: 12,
+      currentWeaponTraitFontSize: 12,
+      currentEquipmentFontSize: 12,
+      useMultipleTraitCards: false,
+      excludedTraitCards: [],
+      useMultipleWeaponTraitCards: false,
+      excludedWeaponTraitCards: [],
+      useMultipleEquipmentCards: false,
+      excludedEquipmentCards: [],
+      useMultipleCombinedCards: false,
+      combinedCards: [],
+      loading: false,
+      determinedSizingAtLeastOnce: false
+    }
+  },
+  watch: {
+    showEquipmentCard: {
+      handler: function (val, oldVal) {
+        setTimeout(() => {
+          if (this.expanded) {
+            this.configureSingleCardSize('equipmentHeightDeterminer', 'currentEquipmentFontSize')
+          } else {
+            this.determinedSizingAtLeastOnce = false
+          }
+        }, 100)
+      },
+      immediate: true,
+      deep: true
+    },
+    showWeaponTraitsCard: {
+      handler: function (val, oldVal) {
+        setTimeout(() => {
+          if (this.expanded) {
+            this.configureSingleCardSize('weaponTraitHeightDeterminer', 'currentWeaponTraitFontSize')
+          } else {
+            this.determinedSizingAtLeastOnce = false
+          }
+        }, 100)
+      },
+      immediate: true,
+      deep: true
     }
   },
   computed: {
@@ -341,7 +400,7 @@ export default {
       if (!this.character.traits || this.character.traits.length === 0) {
         return []
       } else {
-        const traits = []
+        let traits = []
 
         this.character.traits.forEach((trait) => {
           for (let i = 0; i < this.traits.length; i++) {
@@ -394,6 +453,21 @@ export default {
         return traits.sort((trait1, trait2) => {
           return trait1.name.localeCompare(trait2.name)
         })
+      }
+    },
+    excludableCharacterTraits () {
+      if (!this.characterTraits || this.characterTraits.length === 0) {
+        return []
+      } else {
+        let traits = [...this.characterTraits]
+
+        if (this.excludedTraitCards.length) {
+          traits = traits.filter((filteredTrait) => {
+            return this.excludedTraitCards.findIndex(excludedTrait => excludedTrait.id === filteredTrait.id) === -1
+          })
+        }
+
+        return traits
       }
     },
     availableEquipment() {
@@ -470,7 +544,7 @@ export default {
       if (!this.selectedEquipment || this.selectedEquipment.length === 0) {
         return []
       } else {
-        const equipment = []
+        let equipment = []
         const selectedEquipments = [...this.selectedEquipment]
 
         selectedEquipments.forEach((selectedEquipment) => {
@@ -482,6 +556,12 @@ export default {
             }
           }
         })
+
+        if (this.excludedEquipmentCards.length) {
+          equipment = equipment.filter((filteredEquipment) => {
+            return this.excludedEquipmentCards.findIndex(excludedTrait => excludedTrait.id === filteredEquipment.id) === -1
+          })
+        }
 
         return equipment
       }
@@ -595,7 +675,7 @@ export default {
       if (!this.characterWeapons || this.characterWeapons.length === 0) {
         return []
       } else {
-        const traits = []
+        let traits = []
         const characterWeapons = [...this.characterWeapons]
 
         characterWeapons.forEach((characterWeapon) => {
@@ -612,6 +692,12 @@ export default {
             }
           })
         })
+
+        if (this.excludedWeaponTraitCards.length) {
+          traits = traits.filter((filteredTrait) => {
+            return this.excludedWeaponTraitCards.findIndex(excludedTrait => excludedTrait.id === filteredTrait.id) === -1
+          })
+        }
 
         return traits.sort((trait1, trait2) => {
           return trait1.name.localeCompare(trait2.name)
@@ -674,6 +760,155 @@ export default {
         const equipmentIndex = this.equipment.findIndex(equipment => equipment.id === equipmentId)
         this.selectedEquipment.push(this.equipment[equipmentIndex])
       }
+
+      setTimeout(() => {
+        this.configureSingleCardSize('traitHeightDeterminer', 'currentTraitFontSize')
+        if (this.showWeaponTraitsCard) {
+          this.configureSingleCardSize('weaponTraitHeightDeterminer', 'currentWeaponTraitFontSize')
+        }
+
+        if (this.showEquipmentCard) {
+          this.configureSingleCardSize('equipmentHeightDeterminer', 'currentEquipmentFontSize')
+        }
+
+        if (this.determinedSizingAtLeastOnce === false) {
+          this.determinedSizingAtLeastOnce = true
+        }
+      }, 100)
+    },
+    async configureCombinedCardSizes () {
+      /*
+      @todo actually make combined work
+      this.useMultipleCombinedCards = false
+      this.combinedCards = []
+      this.excludedEquipmentCards = []
+      this.excludedWeaponTraitCards = []
+      this.excludedTraitCards = []
+
+      this.loading = true
+      this.currentFontSize = this.upperFontSizeLimit
+      await this.$nextTick()
+
+      // we know height is fixed to 496.
+      let currentHeight = this.$refs.heightDeterminer.scrollHeight
+      let cardNumber = currentHeight / 496
+      while (this.currentFontSize > this.lowerFontSizeLimit && cardNumber > 1) {
+        this.currentFontSize = this.currentFontSize - 1
+        await this.$nextTick()
+        currentHeight = this.$refs.heightDeterminer.scrollHeight
+        cardNumber = currentHeight / 496
+      }
+
+      if (cardNumber > 1.0) {
+        const extraCardsNeeded = Math.ceil(cardNumber - 1.0)
+        for (let i = 1; i <= extraCardsNeeded; i++) {
+          this.combinedCards.push([])
+        }
+
+        let allTraits = [...this.characterTraits]
+        let allWeaponTraits = [...this.characterWeaponTraits]
+        let allEquipment = [...this.characterEquipment]
+
+        if (this.showEquipmentCard) {
+          while (cardNumber > 1.0 && allEquipment.length > 0) {
+            const lastElement = allEquipment.pop()
+            let shouldPush = true
+            for (let i = extraCardsNeeded - 1; i >= 0; i--) {
+              if (this.combinedCards[i].length < 8 && shouldPush) {
+                shouldPush = false
+                this.combinedCards[i].push(lastElement)
+              }
+            }
+            this.excludedEquipmentCards.push(lastElement)
+            await this.$nextTick()
+
+            currentHeight = this.$refs.heightDeterminer.scrollHeight
+            cardNumber = currentHeight / 496
+          }
+        }
+
+        if (this.showWeaponTraitsCard) {
+          while (cardNumber > 1.0 && allWeaponTraits.length > 0) {
+            const lastElement = allWeaponTraits.pop()
+            let shouldPush = true
+            for (let i = extraCardsNeeded - 1; i >= 0; i--) {
+              if (this.combinedCards[i].length < 8 && shouldPush) {
+                shouldPush = false
+                this.combinedCards[i].push(lastElement)
+              }
+            }
+            this.excludedWeaponTraitCards.push(lastElement)
+            await this.$nextTick()
+
+            currentHeight = this.$refs.heightDeterminer.scrollHeight
+            cardNumber = currentHeight / 496
+          }
+        }
+
+        while (cardNumber > 1.0 && allTraits.length > 0) {
+          const lastElement = allTraits.pop()
+          let shouldPush = true
+          for (let i = extraCardsNeeded - 1; i >= 0; i--) {
+            if (this.combinedCards[i].length < 8 && shouldPush) {
+              shouldPush = false
+              this.combinedCards[i].push(lastElement)
+            }
+          }
+          this.excludedTraitCards.push(lastElement)
+          await this.$nextTick()
+
+          currentHeight = this.$refs.heightDeterminer.scrollHeight
+          cardNumber = currentHeight / 496
+        }
+
+        for (let i = extraCardsNeeded - 1; i >= 0; i--) {
+          this.combinedCards[i] = this.combinedCards[i].reverse()
+        }
+      }
+
+      this.loading = false
+      await this.$nextTick()
+
+       */
+    },
+    async configureSingleCardSize(ref, currentFontSizeProperty) {
+      if (this.$refs[ref]) {
+        this.loading = true
+        this[currentFontSizeProperty] = this.upperFontSizeLimit
+        await this.$nextTick()
+
+        // we know height is fixed to 496.
+        let currentHeight = this.$refs[ref].scrollHeight
+        let cardNumber = currentHeight / 496
+        while (this[currentFontSizeProperty] > this.lowerFontSizeLimit && cardNumber > 1) {
+          this[currentFontSizeProperty] = this[currentFontSizeProperty] - 1
+          await this.$nextTick()
+          currentHeight = this.$refs[ref].scrollHeight
+          cardNumber = currentHeight / 496
+        }
+
+        this.loading = false
+      }
+    },
+    toggleExpand () {
+      this.expanded = !this.expanded
+
+      if (this.expanded) {
+        setTimeout(() => {
+          this.configureSingleCardSize('traitHeightDeterminer', 'currentTraitFontSize')
+          if (this.showWeaponTraitsCard) {
+            this.configureSingleCardSize('weaponTraitHeightDeterminer', 'currentWeaponTraitFontSize')
+          }
+
+          if (this.showEquipmentCard) {
+            this.configureSingleCardSize('equipmentHeightDeterminer', 'currentEquipmentFontSize')
+          }
+
+          if (this.determinedSizingAtLeastOnce === false) {
+            this.determinedSizingAtLeastOnce = true
+          }
+        }, 100)
+      }
     }
   }
 }
@@ -700,9 +935,9 @@ export default {
   }
 
   &__card {
-    @apply relative mb-6 ml-6;
+    @apply relative mb-6 ml-6 overflow-y-hidden;
 
-    width: 693px;
+    width: 670px;
     height: 496px;
 
     &__version {
@@ -711,7 +946,7 @@ export default {
     }
 
     &__container {
-      width: 693px;
+      width: 670px;
       @apply ml-6;
 
       .character__card {
@@ -720,7 +955,7 @@ export default {
     }
 
     &__stats {
-      @apply flex flex-col absolute right-3;
+      @apply flex flex-col absolute right-2;
       top: 85px;
       height: 230px;
       width: 330px;
@@ -974,20 +1209,11 @@ export default {
     }
 
     &__row {
-      @apply font-serif px-1 leading-none mb-1;
+      @apply font-serif px-1 leading-none;
+      padding-bottom: 0.4rem;
 
       span, strong {
-        font-size: 0.8rem;
-        line-height: 0.9;
-      }
-
-      &--large {
-        @apply mb-2;
-
-        span, strong {
-          @apply text-lg;
-          line-height: 1.1;
-        }
+        @apply leading-none;
       }
 
       &--added {}

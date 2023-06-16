@@ -16,7 +16,7 @@
           <div class="flex flex-col items-end">
             <h2 class="font-sans text-lg leading-none mb-1">Eternal? <input type="checkbox" :value="eternal" :checked="eternal" @input="toggleEternal"/></h2>
             <h2 class="font-sans text-lg leading-none mb-1">Show separate weapon traits card? <input type="checkbox" :value="showWeaponTraitsCard" :checked="showWeaponTraitsCard" @input="toggleWeaponTraitsCard"/></h2>
-            <h2 class="font-sans text-lg leading-none">Show separate equipment card? <input type="checkbox" :value="showEquipmentCard" :checked="showEquipmentCard" @input="toggleEquipmentCard"/></h2>
+            <h2 class="font-sans text-lg leading-none mb-1">Show separate equipment card? <input type="checkbox" :value="showEquipmentCard" :checked="showEquipmentCard" @input="toggleEquipmentCard"/></h2>
           </div>
         </div>
         <div class="flex flex-col noprint mb-6 p-6">
@@ -33,11 +33,11 @@
             <autocomplete :search="searchCharacters" placeholder="Search for characters and click to add. Click the card to remove." key="characterAutocompleteField" ref="characterAutocomplete" :get-result-value="getResultValue" @submit="addCharacter"></autocomplete>
           </div>
         </div>
-        <div class="flex flex-col">
+        <div class="flex flex-col avoid-breaking-in-children">
           <div v-if="characters_to_print.length" class="noprint px-6">
             <h2 class="text-3xl font-sans mb-2">3. Customise Characters</h2>
           </div>
-          <character :character="character" :index="index + 1" v-for="(character, index) in characters_to_print" :all-selected-characters="characters_to_print" :granted-traits="grantedTraits" :key="character.id" :crew="crew" :version="formattedVersion" :affiliations="affiliations" :traits="traits" :equipment="equipment" :upgrades="upgrades" :weapons="weapons" :show-equipment-card="showEquipmentCard" :show-weapon-traits-card="showWeaponTraitsCard" @click="removeCharacter"></character>
+          <character :character="character" :index="index + 1" v-for="(character, index) in characters_to_print" :all-selected-characters="characters_to_print" :granted-traits="grantedTraits" :key="character.id" :crew="crew" :version="formattedVersion" :affiliations="affiliations" :traits="traits" :equipment="equipment" :upgrades="upgrades" :weapons="weapons" :show-equipment-card="showEquipmentCard" :combine-all-cards="combineAllCards" :show-weapon-traits-card="showWeaponTraitsCard" @click="removeCharacter"></character>
         </div>
         <div v-if="characters_to_print.length" class="flex flex-col noprint p-6 mt-4">
           <h2 class="text-3xl font-sans mb-2">4. Print Sheet</h2>
@@ -62,6 +62,7 @@ export default {
       eternal: 0,
       showEquipmentCard: 0,
       showWeaponTraitsCard: 0,
+      combineAllCards: 0,
       crew: null,
       crewInputExpanded: false,
       characters_to_print: [],
@@ -185,6 +186,7 @@ export default {
             this.loadEternalToggle()
             this.loadEquipmentCardToggle()
             this.loadWeaponTraitsCardToggle()
+            this.loadCombineAllCardsToggle()
             this.loadCurrentCharacters()
           } else {
             this.error = true
@@ -200,6 +202,7 @@ export default {
             this.loadEternalToggle()
             this.loadEquipmentCardToggle()
             this.loadWeaponTraitsCardToggle()
+            this.loadCombineAllCardsToggle()
             this.loadCurrentCharacters()
           } else {
             this.error = true
@@ -356,6 +359,13 @@ export default {
     toggleWeaponTraitsCard () {
       this.showWeaponTraitsCard = this.showWeaponTraitsCard === 1 ? 0 : 1
       window.localStorage.setItem('showWeaponTraitsCard', this.showWeaponTraitsCard)
+    },
+    loadCombineAllCardsToggle() {
+      this.combineAllCards = parseInt(window.localStorage.getItem('combineAllCards'))
+    },
+    toggleCombineAllCards () {
+      this.combineAllCards = this.combineAllCards === 1 ? 0 : 1
+      window.localStorage.setItem('combineAllCards', this.combineAllCards)
     }
   }
 }

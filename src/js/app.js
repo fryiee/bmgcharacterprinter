@@ -4,7 +4,10 @@ import { library } from '@fortawesome/fontawesome-svg-core'
 import {
     faSearch,
     faBars,
-    faChevronDown
+    faChevronDown,
+    faSpinner,
+    faCheckCircle,
+    faTimesCircle
 } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 import SvgVue from 'svg-vue'
@@ -21,7 +24,10 @@ Vue.component('font-awesome-icon', FontAwesomeIcon)
 library.add(
     faSearch,
     faBars,
-    faChevronDown
+    faChevronDown,
+    faSpinner,
+    faCheckCircle,
+    faTimesCircle
 )
 
 new Vue({
