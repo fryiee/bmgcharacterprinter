@@ -15,8 +15,7 @@
     }
 
     .character {
-        display: inline-flex !important;
-        flex-wrap: wrap;
+        display: table !important;
         break-inside: avoid;
         margin-bottom: 0.5rem !important;
 
@@ -33,7 +32,7 @@
     }
 
     .character__expander {
-        display: inline-flex !important;
+        display: table !important;
         flex-wrap: wrap;
         height: auto !important;
         padding: 0 !important;

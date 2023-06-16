@@ -2,15 +2,10 @@
   <div class="character">
     <a href="#" @click.prevent="toggleExpand" :class="'w-full noprint px-6 py-2 bg-yellow-400 flex items-center justify-start border-b-2 border-black'+(index === 1 ? ' border-t-2' : '')">
       <font-awesome-icon icon="chevron-down" size="lg" :class="expanded ? 'transform rotate-180' : ''"></font-awesome-icon>
-      <h2 class="text-3xl font-sans ml-2 mb-0 leading-none">{{index}}. {{character.alias}} ({{character.name}})</h2>
-      <div class="ml-auto inline-flex items-center justify-end">
-        <template v-if="determinedSizingAtLeastOnce === false">
-          <h2 class="text-lg leading-none font-sans text-red-500 mr-2">We haven't automatically resized this character's cards. Expand the character at least once to properly size your cards.</h2>
-          <font-awesome-icon icon="times-circle" class="text-red-500 fill-current" size="lg"></font-awesome-icon>
-        </template>
-        <template v-else>
-          <font-awesome-icon icon="check-circle" class="text-green-500 fill-current" size="lg"></font-awesome-icon>
-        </template>
+      <h2 class="text-3xl font-sans ml-2 mb-0 max-w-8xl leading-none overflow-ellipsis overflow-hidden whitespace-nowrap">{{index}}. {{character.alias}} ({{character.name}})</h2>
+      <div v-if="determinedSizingAtLeastOnce === false" class="ml-auto inline-flex items-center justify-end notification-row">
+        <h2 class="text-lg leading-none text-right font-sans text-red-500 mr-2">This character card hasn't been sized. Expand the character at least once.</h2>
+        <font-awesome-icon icon="times-circle" class="text-red-500 fill-current" size="lg"></font-awesome-icon>
       </div>
     </a>
 
@@ -307,7 +302,7 @@ export default {
       selectedEquipment: [],
       expanded: false,
       lowerFontSizeLimit: 12,
-      upperFontSizeLimit: 20,
+      upperFontSizeLimit: 22,
       currentTraitFontSize: 12,
       currentWeaponTraitFontSize: 12,
       currentEquipmentFontSize: 12,
@@ -323,15 +318,29 @@ export default {
       determinedSizingAtLeastOnce: false
     }
   },
+  mounted() {
+    setTimeout(() => {
+      this.configureSingleCardSize('traitHeightDeterminer', 'currentTraitFontSize')
+      if (this.showWeaponTraitsCard) {
+        this.configureSingleCardSize('weaponTraitHeightDeterminer', 'currentWeaponTraitFontSize')
+      }
+
+      if (this.showEquipmentCard) {
+        this.configureSingleCardSize('equipmentHeightDeterminer', 'currentEquipmentFontSize')
+      }
+
+      if (this.determinedSizingAtLeastOnce === false) {
+        this.determinedSizingAtLeastOnce = true
+      }
+    }, 100)
+  },
   watch: {
     showEquipmentCard: {
       handler: function (val, oldVal) {
         setTimeout(() => {
-          if (this.expanded) {
-            this.configureSingleCardSize('equipmentHeightDeterminer', 'currentEquipmentFontSize')
-          } else {
-            this.determinedSizingAtLeastOnce = false
-          }
+          this.configureSingleCardSize('traitHeightDeterminer', 'currentTraitFontSize')
+          this.configureSingleCardSize('weaponTraitHeightDeterminer', 'currentWeaponTraitFontSize')
+          this.configureSingleCardSize('equipmentHeightDeterminer', 'currentEquipmentFontSize')
         }, 100)
       },
       immediate: true,
@@ -340,11 +349,9 @@ export default {
     showWeaponTraitsCard: {
       handler: function (val, oldVal) {
         setTimeout(() => {
-          if (this.expanded) {
-            this.configureSingleCardSize('weaponTraitHeightDeterminer', 'currentWeaponTraitFontSize')
-          } else {
-            this.determinedSizingAtLeastOnce = false
-          }
+          this.configureSingleCardSize('traitHeightDeterminer', 'currentTraitFontSize')
+          this.configureSingleCardSize('weaponTraitHeightDeterminer', 'currentWeaponTraitFontSize')
+          this.configureSingleCardSize('equipmentHeightDeterminer', 'currentEquipmentFontSize')
         }, 100)
       },
       immediate: true,
@@ -919,10 +926,10 @@ export default {
   @apply flex flex-row w-full items-start justify-start flex-wrap;
 
   &__expander {
-    @apply w-full hidden flex-row items-start justify-start flex-wrap;
+    @apply w-full overflow-y-hidden h-0 flex flex-row items-start justify-start flex-wrap;
 
     &--expanded {
-      @apply flex py-6;
+      @apply overflow-y-visible h-auto py-6;
     }
   }
 
@@ -937,7 +944,7 @@ export default {
   &__card {
     @apply relative mb-6 ml-6 overflow-y-hidden;
 
-    width: 670px;
+    width: 693px;
     height: 496px;
 
     &__version {
@@ -946,7 +953,7 @@ export default {
     }
 
     &__container {
-      width: 670px;
+      width: 693px;
       @apply ml-6;
 
       .character__card {
@@ -955,7 +962,7 @@ export default {
     }
 
     &__stats {
-      @apply flex flex-col absolute right-2;
+      @apply flex flex-col absolute right-1;
       top: 85px;
       height: 230px;
       width: 330px;
@@ -1210,7 +1217,7 @@ export default {
 
     &__row {
       @apply font-serif px-1 leading-none;
-      padding-bottom: 0.4rem;
+      padding-bottom: 0.2rem;
 
       span, strong {
         @apply leading-none;
@@ -1231,5 +1238,9 @@ export default {
       }
     }
   }
+}
+
+.notification-row {
+  max-width: 40%;
 }
 </style>

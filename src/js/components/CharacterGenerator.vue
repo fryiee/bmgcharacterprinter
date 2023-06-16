@@ -14,9 +14,18 @@
             <h5 v-if="version" class="font-sans text-sm">Game Data Version: {{formattedVersion}} ({{version}})</h5>
           </div>
           <div class="flex flex-col items-end">
-            <h2 class="font-sans text-lg leading-none mb-1">Eternal? <input type="checkbox" :value="eternal" :checked="eternal" @input="toggleEternal"/></h2>
-            <h2 class="font-sans text-lg leading-none mb-1">Show separate weapon traits card? <input type="checkbox" :value="showWeaponTraitsCard" :checked="showWeaponTraitsCard" @input="toggleWeaponTraitsCard"/></h2>
-            <h2 class="font-sans text-lg leading-none mb-1">Show separate equipment card? <input type="checkbox" :value="showEquipmentCard" :checked="showEquipmentCard" @input="toggleEquipmentCard"/></h2>
+            <div class="flex flex-row items-center justify-end mb-1">
+              <h2 class="font-sans text-lg leading-none mr-1 text-right">Eternal?</h2>
+              <input type="checkbox" :value="eternal" :checked="eternal" @input="toggleEternal"/>
+            </div>
+            <div class="flex flex-row items-center justify-end mb-1">
+              <h2 class="font-sans text-lg leading-none mr-2 text-right">Show separate weapon traits card?</h2>
+              <input type="checkbox" :value="showWeaponTraitsCard" :checked="showWeaponTraitsCard" @input="toggleWeaponTraitsCard"/>
+            </div>
+            <div class="flex flex-row items-center justify-end mb-1">
+              <h2 class="font-sans text-lg leading-none mr-2 text-right">Show separate equipment card?</h2>
+              <input type="checkbox" :value="showEquipmentCard" :checked="showEquipmentCard" @input="toggleEquipmentCard"/>
+            </div>
           </div>
         </div>
         <div class="flex flex-col noprint mb-6 p-6">
