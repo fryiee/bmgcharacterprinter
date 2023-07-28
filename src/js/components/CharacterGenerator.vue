@@ -39,7 +39,16 @@
           </div>
           <div class="mt-10 relative z-5" v-if="crew">
             <h2 class="text-3xl font-sans mb-2">2. Add Characters</h2>
-            <autocomplete :search="searchCharacters" placeholder="Search for characters and click to add. Click the card to remove." key="characterAutocompleteField" ref="characterAutocomplete" :get-result-value="getResultValue" @submit="addCharacter"></autocomplete>
+            <autocomplete :search="searchCharacters" placeholder="Search for characters and click to add. Click the card to remove." key="characterAutocompleteField" ref="characterAutocomplete" :get-result-value="getResultValue" @submit="addCharacter">
+              <template #result="{ result, props }">
+                <li v-bind="props" class="cursor-pointer">
+                  <div class="flex flex-row items-center justify-start">
+                    <img class="h-10 w-10 object-cover mr-2" :src="result.image" :alt="result.name + ' image'"/>
+                    <span class="inline-block">{{result.alias}}&nbsp;[{{result.name}}]</span>
+                  </div>
+                </li>
+              </template>
+            </autocomplete>
           </div>
         </div>
         <div class="flex flex-col avoid-breaking-in-children">
@@ -238,18 +247,26 @@ export default {
         return character.alias.toLowerCase()
             .includes(input.toLowerCase()) || character.name.toLowerCase()
             .includes(input.toLowerCase())
+      }).sort((a, b) => {
+        return a.alias.localeCompare(b.alias)
       })
     },
     searchCrews(input) {
-      if (input.length < 1) { return [] }
       if (!this.affiliations) { return [] }
+      if (input.length < 1) {
+        return this.affiliations.sort((a, b) => {
+          return a.name.localeCompare(b.name)
+        })
+      }
       return this.affiliations.filter(crew => {
         return crew.name.toLowerCase()
             .includes(input.toLowerCase())
+      }).sort((a, b) => {
+        return a.name.localeCompare(b.name)
       })
     },
     getResultValue(result) {
-      return result.alias + ' [' + result.name + ']'
+      return result
     },
     getCrewResultValue(result) {
       return result.name

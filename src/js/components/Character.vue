@@ -2,7 +2,7 @@
   <div class="character">
     <a href="#" @click.prevent="toggleExpand" :class="'w-full noprint px-6 py-2 bg-yellow-400 flex items-center justify-start border-b-2 border-black'+(index === 1 ? ' border-t-2' : '')">
       <font-awesome-icon icon="chevron-down" size="lg" :class="expanded ? 'transform rotate-180' : ''"></font-awesome-icon>
-      <h2 class="text-3xl font-sans ml-2 mb-0 max-w-8xl leading-none overflow-ellipsis overflow-hidden whitespace-nowrap">{{index}}. {{character.alias}} ({{character.name}})</h2>
+      <h2 class="text-3xl font-sans ml-2 mb-0 max-w-8xl leading-none overflow-ellipsis overflow-hidden whitespace-nowrap">{{index}}. {{character.alias}} [{{character.name}}]</h2>
       <div v-if="determinedSizingAtLeastOnce === false" class="ml-auto inline-flex items-center justify-end notification-row">
         <h2 class="text-lg leading-none text-right font-sans text-red-500 mr-2">This character card hasn't been sized. Expand the character at least once.</h2>
         <font-awesome-icon icon="times-circle" class="text-red-500 fill-current" size="lg"></font-awesome-icon>
