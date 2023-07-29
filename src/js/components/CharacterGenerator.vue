@@ -29,7 +29,8 @@
           </div>
         </div>
         <div class="flex flex-col noprint mb-6 p-6">
-          <h2 class="text-3xl font-sans mb-2">1. Select Crew</h2>
+          <h2 class="text-3xl font-sans mb-1">1. Select Crew</h2>
+          <p class="mb-2">Selecting a crew populates the available equipment choices for each character. Changing crew will remove all existing characters you have added to your print sheet.</p>
           <a href="#" @click.prevent="crewInputExpanded = !crewInputExpanded" v-if="crew" class="border-2 inline-flex items-center justify-start border-black bg-yellow-400 w-auto self-start px-3 py-2">
             <h3 class="font-sans text-2xl">{{crew.name}}</h3>
             <font-awesome-icon icon="chevron-down" size="lg" :class="'ml-2 transform'+(crewInputExpanded ? ' rotate-180' : '')"></font-awesome-icon>
@@ -38,8 +39,9 @@
             <autocomplete ref="crewAutocomplete" key="crewAutocompleteField" :search="searchCrews" :get-result-value="getCrewResultValue" @submit="selectCrew" placeholder="Search for crews by name" class="mt-4 mb-0"></autocomplete>
           </div>
           <div class="mt-10 relative z-5" v-if="crew">
-            <h2 class="text-3xl font-sans mb-2">2. Add Characters</h2>
-            <autocomplete :search="searchCharacters" placeholder="Search for characters and click to add. Click the card to remove." key="characterAutocompleteField" ref="characterAutocomplete" :get-result-value="getResultValue" @submit="addCharacter">
+            <h2 class="text-3xl font-sans mb-1">2. Add Characters</h2>
+            <p class="mb-2">Once you have added a character, you can click the character's card again to remove it from your print sheet.</p>
+            <autocomplete :search="searchCharacters" placeholder="Search for characters by name or alias" key="characterAutocompleteField" ref="characterAutocomplete" :get-result-value="getResultValue" @submit="addCharacter">
               <template #result="{ result, props }">
                 <li v-bind="props" class="cursor-pointer">
                   <div class="flex flex-row items-center justify-start">
@@ -53,7 +55,8 @@
         </div>
         <div class="flex flex-col avoid-breaking-in-children">
           <div v-if="characters_to_print.length" class="noprint px-6">
-            <h2 class="text-3xl font-sans mb-2">3. Customise Characters</h2>
+            <h2 class="text-3xl font-sans mb-1">3. Customise Characters</h2>
+            <p class="mb-2">You can toggle generic equipment or equipment granted by your crew from within the dropdown for each character. Please note that equipment limits are not enforced.</p>
           </div>
           <character :character="character" :index="index + 1" v-for="(character, index) in characters_to_print" :all-selected-characters="characters_to_print" :granted-traits="grantedTraits" :key="character.id" :crew="crew" :version="formattedVersion" :affiliations="affiliations" :traits="traits" :equipment="equipment" :upgrades="upgrades" :weapons="weapons" :show-equipment-card="showEquipmentCard" :combine-all-cards="combineAllCards" :show-weapon-traits-card="showWeaponTraitsCard" @click="removeCharacter"></character>
         </div>
@@ -357,13 +360,16 @@ export default {
     selectCrew (crew) {
       this.crew = crew
       window.localStorage.setItem('crew', crew.id)
-      this.characters_to_print.forEach((character) => {
-        this.removeCharacter(character)
-      })
+      const printingCharacters = [...this.characters_to_print]
+      for (let i = 0; i < printingCharacters.length; i++) {
+        this.removeCharacter(printingCharacters[i])
+      }
       this.crewInputExpanded = false
       if (this.$refs.crewAutocomplete) {
         this.$refs.crewAutocomplete.value = ''
       }
+
+      this.$forceUpdate()
     },
     loadEternalToggle() {
       this.eternal = parseInt(window.localStorage.getItem('eternal'))
