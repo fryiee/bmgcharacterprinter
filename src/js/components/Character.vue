@@ -946,10 +946,12 @@ export default {
 
     width: 693px;
     height: 496px;
+    background-size: 693px 496px;
 
     &__version {
       @apply absolute text-yellow-400 left-3 text-sm;
-      top: 85px;
+      top: 100px;
+      width: 75px;
     }
 
     &__container {
@@ -1168,7 +1170,7 @@ export default {
             object-fit: contain;
 
             &.character__card__banner__pod__image--dark {
-              @apply bg-black rounded;
+              @apply bg-black rounded bg-contain;
               margin-right: 5px;
             }
           }
@@ -1180,7 +1182,7 @@ export default {
             background-size: 40px;
 
             &.character__card__banner__pod__image--dark {
-              @apply bg-black rounded;
+              @apply bg-black rounded bg-contain;
               margin-right: 5px;
             }
           }
