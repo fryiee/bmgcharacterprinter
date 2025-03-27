@@ -51,16 +51,19 @@
                 </li>
               </template>
             </autocomplete>
+            <p class="mt-2 mb-4">or, create a custom character</p>
+            <a href="#" @click.prevent="addCustomCharacter" class="border-2 text-xl inline-flex items-center justify-start border-black bg-yellow-400 w-auto self-start px-3 py-2">Add A New Custom Character</a>
           </div>
         </div>
         <div class="flex flex-col avoid-breaking-in-children">
-          <div v-if="characters_to_print.length" class="noprint px-6">
+          <div v-if="characters_to_print.length || created_characters_to_print.length" class="noprint px-6">
             <h2 class="text-3xl font-sans mb-1">3. Customise Characters</h2>
             <p class="mb-2">You can toggle generic equipment or equipment granted by your crew from within the dropdown for each character. Please note that equipment limits are not enforced.</p>
           </div>
-          <character :character="character" :index="index + 1" v-for="(character, index) in characters_to_print" :all-selected-characters="characters_to_print" :granted-traits="grantedTraits" :key="character.id" :crew="crew" :version="formattedVersion" :affiliations="affiliations" :traits="traits" :equipment="equipment" :upgrades="upgrades" :weapons="weapons" :show-equipment-card="showEquipmentCard" :combine-all-cards="combineAllCards" :show-weapon-traits-card="showWeaponTraitsCard" @click="removeCharacter"></character>
+          <character :character="character" :is-local="localOnly" :index="index + 1" v-for="(character, index) in characters_to_print" :all-selected-characters="characters_to_print" :granted-traits="grantedTraits" :key="character.id" :crew="crew" :version="formattedVersion" :affiliations="affiliations" :traits="traits" :equipment="equipment" :upgrades="upgrades" :weapons="weapons" :show-equipment-card="showEquipmentCard" :combine-all-cards="combineAllCards" :show-weapon-traits-card="showWeaponTraitsCard" @click="removeCharacter"></character>
+          <created-character :character="customCharacter" :is-local="localOnly" :index="cIndex + 1" v-for="(customCharacter, cIndex) in created_characters_to_print" :all-selected-characters="characters_to_print" :granted-traits="grantedTraits" :key="customCharacter.id" :crew="crew" :version="formattedVersion" :affiliations="affiliations" :traits="traits" :equipment="equipment" :upgrades="upgrades" :weapons="weapons" :show-equipment-card="showEquipmentCard" :combine-all-cards="combineAllCards" :show-weapon-traits-card="showWeaponTraitsCard" @click="removeCustomCharacter"></created-character>
         </div>
-        <div v-if="characters_to_print.length" class="flex flex-col noprint p-6 mt-4">
+        <div v-if="characters_to_print.length || created_characters_to_print.length" class="flex flex-col noprint p-6 mt-4">
           <h2 class="text-3xl font-sans mb-2">4. Print Sheet</h2>
           <p class="font-serif text-lg">Use your browser's print dialog or click <a href="#" @click.prevent="openPrintDialog" class="font-bold underline">here</a>.</p>
           <p class="font-serif text-lg">Recommended print settings to match KM sized cards: <span class="underline">A4 / Portrait / Scale: 50% / Margins: Minimal</span></p>
@@ -90,6 +93,7 @@ export default {
       crew: null,
       crewInputExpanded: false,
       characters_to_print: [],
+      created_characters_to_print: [],
     }
   },
   computed: {
@@ -301,6 +305,12 @@ export default {
         }
       }
     },
+    addCustomCharacter () {
+      const newUid = uuid()
+      this.created_characters_to_print.push({
+        id: newUid
+      })
+    },
     removeCharacter (character) {
       const existingCharacter = this.characters_to_print.findIndex((characterObject) => {
         return characterObject.id === character.id
@@ -308,6 +318,16 @@ export default {
 
       if (existingCharacter !== -1) {
         this.characters_to_print.splice(existingCharacter, 1)
+        this.removeFromSaveData(character)
+      }
+    },
+    removeCustomCharacter (character) {
+      const existingCharacter = this.created_characters_to_print.findIndex((characterObject) => {
+        return characterObject.id === character.id
+      })
+
+      if (existingCharacter !== -1) {
+        this.created_characters_to_print.splice(existingCharacter, 1)
         this.removeFromSaveData(character)
       }
     },
