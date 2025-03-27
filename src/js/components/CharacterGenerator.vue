@@ -12,6 +12,7 @@
           <div class="flex flex-col">
             <h1 class="text-4xl mb-1">Batman Miniature Game Crew Sheet Generator</h1>
             <h5 v-if="version" class="font-sans text-sm">Game Data Version: {{formattedVersion}} ({{version}})</h5>
+            <h4 v-if="localOnly" class="font-sans text-lg text-red-800">LOCAL GAME DATA ONLY (No imagery)</h4>
           </div>
           <div class="flex flex-col items-end">
             <div class="flex flex-row items-center justify-end mb-1">
@@ -45,7 +46,7 @@
               <template #result="{ result, props }">
                 <li v-bind="props" class="cursor-pointer">
                   <div class="flex flex-row items-center justify-start">
-                    <img class="h-10 w-10 object-cover mr-2" :src="result.image" :alt="result.name + ' image'"/>
+                    <img v-if="!localOnly" class="h-10 w-10 object-cover mr-2" :src="result.image" :alt="result.name + ' image'"/>
                     <span class="inline-block">{{result.alias}}&nbsp;[{{result.name}}]</span>
                   </div>
                 </li>
@@ -58,7 +59,7 @@
             <h2 class="text-3xl font-sans mb-1">3. Customise Characters</h2>
             <p class="mb-2">You can toggle generic equipment or equipment granted by your crew from within the dropdown for each character. Please note that equipment limits are not enforced.</p>
           </div>
-          <character :character="character" :index="index + 1" v-for="(character, index) in characters_to_print" :all-selected-characters="characters_to_print" :granted-traits="grantedTraits" :key="character.id" :crew="crew" :version="formattedVersion" :affiliations="affiliations" :traits="traits" :equipment="equipment" :upgrades="upgrades" :weapons="weapons" :show-equipment-card="showEquipmentCard" :combine-all-cards="combineAllCards" :show-weapon-traits-card="showWeaponTraitsCard" @click="removeCharacter"></character>
+          <character :character="character" :local-only="localOnly" :index="index + 1" v-for="(character, index) in characters_to_print" :all-selected-characters="characters_to_print" :granted-traits="grantedTraits" :key="character.id" :crew="crew" :version="formattedVersion" :affiliations="affiliations" :traits="traits" :equipment="equipment" :upgrades="upgrades" :weapons="weapons" :show-equipment-card="showEquipmentCard" :combine-all-cards="combineAllCards" :show-weapon-traits-card="showWeaponTraitsCard" @click="removeCharacter"></character>
         </div>
         <div v-if="characters_to_print.length" class="flex flex-col noprint p-6 mt-4">
           <h2 class="text-3xl font-sans mb-2">4. Print Sheet</h2>
@@ -73,7 +74,7 @@
 <script>
 import axios from 'axios'
 import { uuid } from 'uuidv4'
-import * as localGameData from '../gameData.json';
+const localGameData = require('../gameData.json')
 
 export default {
   data() {

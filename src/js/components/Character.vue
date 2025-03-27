@@ -12,7 +12,7 @@
     <div :class="'character__expander'+(expanded ? ' character__expander--expanded' : '')">
       <div class="flex flex-col character__card__container">
         <a href="#" @click.prevent="$emit('click', character)" class="character__card" :style="backgroundStyle">
-          <span class="character__card__version">{{version}}&nbsp;&copy;{{nowYear}} Knight Models.</span>
+          <span :class="'character__card__version'+(localOnly ? ' character__card__version--local' : '')">{{version}}&nbsp;&copy;{{nowYear}} Knight Models.</span>
           <div class="character__card__banner">
             <div class="character__card__banner__name">
               <h4>{{character.alias}}</h4>
@@ -27,13 +27,13 @@
             <div class="character__card__banner__pod">
               <small class="character__card__banner__pod__title">Aff</small>
               <div class="character__card__banner__pod__images">
-                <div v-if="affiliation.is_team === false" v-for="affiliation in characterAffiliations" :key="character.id+'-'+'affiliation-'+affiliation.id" class="character__card__banner__pod__image--dark img" :style="'background-image:url('+affiliation.icon+');'"></div>
+                <div v-if="affiliation.is_team === false" v-for="affiliation in characterAffiliations" :key="character.id+'-'+'affiliation-'+affiliation.id" :class="(localOnly ? 'character__card__banner__pod__image' : 'character__card__banner__pod__image--dark')+' img'" :style="'background-image:url('+(localOnly ? getIconFromAffiliation(affiliation) : affiliation.icon)+');'"></div>
               </div>
             </div>
             <div class="character__card__banner__pod">
               <small class="character__card__banner__pod__title">Riv</small>
               <div class="character__card__banner__pod__images">
-                <div v-for="affiliation in characterRivals" :key="character.id+'-'+'rival-'+affiliation.id" class="character__card__banner__pod__image--dark img" :style="'background-image:url('+affiliation.icon+');'"></div>
+                <div v-for="affiliation in characterRivals" :key="character.id+'-'+'rival-'+affiliation.id" :class="(localOnly ? 'character__card__banner__pod__image' : 'character__card__banner__pod__image--dark')+' img'" :style="'background-image:url('+(localOnly ? getIconFromAffiliation(affiliation) : affiliation.icon)+');'"></div>
               </div>
             </div>
             <div class="character__card__banner__pod character__card__banner__pod--col character__card__banner__pod--center">
@@ -75,10 +75,6 @@
               <div class="character__card__stats__row__pod">
                 <img src="dist/img/icons/background_movement.svg" alt="movement icon"/>
                 <span>{{character.movement}}</span>
-              </div>
-              <div class="character__card__stats__row__pod">
-                <img src="dist/img/icons/background_special.svg" alt="special icon"/>
-                <span>{{character.special}}</span>
               </div>
             </div>
           </div>
@@ -150,7 +146,7 @@
 <script>
 export default {
   name: 'Character',
-  props: ['character', 'index', 'affiliations', 'traits', 'equipment', 'upgrades', 'weapons', 'crew', 'version', 'eternal', 'showEquipmentCard', 'showWeaponTraitsCard', 'combineAllCards', 'allSelectedCharacters', 'grantedTraits'],
+  props: ['character', 'index', 'affiliations', 'localOnly', 'traits', 'equipment', 'upgrades', 'weapons', 'crew', 'version', 'eternal', 'showEquipmentCard', 'showWeaponTraitsCard', 'combineAllCards', 'allSelectedCharacters', 'grantedTraits'],
   data() {
     return {
       icons: [
@@ -275,6 +271,92 @@ export default {
         'yellow_polygon',
         'yellow_separator',
       ],
+      localAffiliationMapping: [
+        {
+          "id": 3,
+          "icon": "law_forces"
+        },
+        {
+          "id": 4,
+          "icon": "harley_quinn_friends"
+        },
+        {
+          "id": 5,
+          "icon": "vigilantes"
+        },
+        {
+          "id": 6,
+          "icon": "doom_patrol"
+        },
+        {
+          "id": 7,
+          "icon": "joker"
+        },
+        {
+          "id": 8,
+          "icon": "cults"
+        },
+        {
+          "id": 9,
+          "icon": "league"
+        },
+        {
+          "id": 10,
+          "icon": "mrfreeze"
+        },
+        {
+          "id": 11,
+          "icon": "crime"
+        },
+        {
+          "id": 12,
+          "icon": "penguin"
+        },
+        {
+          "id": 13,
+          "icon": "riddler"
+        },
+        {
+          "id": 14,
+          "icon": "bane"
+        },
+        {
+          "id": 15,
+          "icon": "suicide_squad"
+        },
+        {
+          "id": 18,
+          "icon": "batman_who_laughs"
+        },
+        {
+          "id": 19,
+          "icon": ""
+        },
+        {
+          "id": 20,
+          "icon": "owls"
+        },
+        {
+          "id": 22,
+          "icon": "twoface"
+        },
+        {
+          "id": 23,
+          "icon": "unknown"
+        },
+        {
+          "id": 24,
+          "icon": "watchmen"
+        },
+        {
+          "id": 25,
+          "icon": "scarecrow"
+        },
+        {
+          "id": 27,
+          "icon": "royal_flush"
+        }
+      ],
       ranks: [
         {
           id: 1,
@@ -372,7 +454,7 @@ export default {
   },
   computed: {
     backgroundStyle() {
-      return 'background-image:url("' + this.character.background + '");'
+      return 'background-image:url("' + (this.localOnly ? 'dist/img/local_background.jpg' : this.character.background) + '");'
     },
     nowYear () {
       return (new Date()).getUTCFullYear().toString()
@@ -751,6 +833,16 @@ export default {
 
       return alteredText
     },
+    getIconFromAffiliation(affiliation)
+    {
+      let affiliationIndex = this.localAffiliationMapping.findIndex(affiliationIcon => affiliationIcon.id === affiliation.id)
+
+      if (affiliationIndex !== -1) {
+        return 'dist/img/icons/aff_' + this.localAffiliationMapping[affiliationIndex].icon + '_icon.svg';
+      } else {
+        return false;
+      }
+    },
     weaponDamage (weapon) {
       if (!weapon.damage || weapon.damage.length === 0) {
         return []
@@ -964,6 +1056,10 @@ export default {
       @apply absolute text-yellow-400 left-3 text-sm;
       top: 100px;
       width: 75px;
+
+      &--local {
+        @apply text-black;
+      }
     }
 
     &__container {
@@ -1038,27 +1134,27 @@ export default {
         @apply flex flex-row items-center justify-between mb-3 self-end mx-auto;
 
         &--1 {
-          width: 200px;
+          width: 270px;
         }
 
         &--2 {
-          width: 300px;
+          width: 270px;
         }
 
         &__pod {
           @apply text-black flex flex-row relative items-center justify-start flex-shrink-0 flex-grow-0;
-          width: 90px;
+          width: 100px;
 
           img {
             @apply block flex-shrink-0 flex-grow-0 absolute left-0 top-1/2;
-            width: 102px;
+            width: 112px;
             height: auto;
             z-index: 1;
             transform: translateY(-50%);
           }
 
           span {
-            @apply ml-14 text-4xl text-black relative z-5;
+            @apply ml-16 text-5xl text-black relative z-5;
           }
         }
       }
@@ -1185,6 +1281,11 @@ export default {
               @apply bg-black rounded bg-contain;
               margin-right: 5px;
             }
+
+            &.character__card__banner__pod__image {
+              @apply rounded bg-contain;
+              margin-right: 5px;
+            }
           }
 
           .img {
@@ -1195,6 +1296,11 @@ export default {
 
             &.character__card__banner__pod__image--dark {
               @apply bg-black rounded bg-contain;
+              margin-right: 5px;
+            }
+
+            &.character__card__banner__pod__image {
+              @apply rounded bg-contain;
               margin-right: 5px;
             }
           }

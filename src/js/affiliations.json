@@ -1,0 +1,88 @@
+{
+  "affiliations": [
+    {
+      "id": 3,
+      "icon": "law_forces"
+    },
+    {
+      "id": 4,
+      "icon": "harley_quinn_friends"
+    },
+    {
+      "id": 5,
+      "icon": "vigilantes"
+    },
+    {
+      "id": 6,
+      "icon": "doom_patrol"
+    },
+    {
+      "id": 7,
+      "icon": "joker"
+    },
+    {
+      "id": 8,
+      "icon": "cults"
+    },
+    {
+      "id": 9,
+      "icon": "league"
+    },
+    {
+      "id": 10,
+      "icon": "mrfreeze"
+    },
+    {
+      "id": 11,
+      "icon": "crime"
+    },
+    {
+      "id": 12,
+      "icon": "penguin"
+    },
+    {
+      "id": 13,
+      "icon": "riddler"
+    },
+    {
+      "id": 14,
+      "icon": "bane"
+    },
+    {
+      "id": 15,
+      "icon": "suicide_squad"
+    },
+    {
+      "id": 18,
+      "icon": "batman_who_laughs"
+    },
+    {
+      "id": 19,
+      "icon": ""
+    },
+    {
+      "id": 20,
+      "icon": "owls"
+    },
+    {
+      "id": 22,
+      "icon": "twoface"
+    },
+    {
+      "id": 23,
+      "icon": "unknown"
+    },
+    {
+      "id": 24,
+      "icon": "watchmen"
+    },
+    {
+      "id": 25,
+      "icon": "scarecrow"
+    },
+    {
+      "id": 27,
+      "icon": "royal_flush"
+    }
+  ]
+}
