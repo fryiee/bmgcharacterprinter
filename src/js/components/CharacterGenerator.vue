@@ -72,11 +72,14 @@
 
 <script>
 import axios from 'axios'
+import { uuid } from 'uuidv4'
+import * as localGameData from '../gameData.json';
 
 export default {
   data() {
     return {
       loaded: false,
+      localOnly: true,
       error: false,
       game_data: null,
       version: null,
@@ -189,52 +192,67 @@ export default {
     }
   },
   async mounted() {
-    try {
-      const currentVersionResponse = await axios.get('https://corsproxy.io/?https://app.knightmodels.com/version', {})
-      if (currentVersionResponse.status === 200) {
-        const currentVersion = currentVersionResponse.data.version.toString()
-        const localVersion = window.localStorage.getItem('version')
-        if (currentVersion !== localVersion) {
-          const gameDataResponse = await axios.get('https://corsproxy.io/?https://app.knightmodels.com/gamedata', {})
-          if (gameDataResponse.status === 200) {
-            const gameData = gameDataResponse.data
-            window.localStorage.setItem('gamedata', JSON.stringify(gameData))
-            window.localStorage.setItem('version', currentVersion)
-            this.version = currentVersion
-            this.loaded = true
-            this.game_data = gameData
-            this.loadCurrentCrew()
-            this.loadEternalToggle()
-            this.loadEquipmentCardToggle()
-            this.loadWeaponTraitsCardToggle()
-            this.loadCombineAllCardsToggle()
-            this.loadCurrentCharacters()
+    if (this.localOnly) {
+      const gameData = localGameData.data
+      window.localStorage.setItem('gamedata', JSON.stringify(gameData))
+      window.localStorage.setItem('version', localGameData.version)
+      this.version = localGameData.version
+      this.loaded = true
+      this.game_data = gameData
+      this.loadCurrentCrew()
+      this.loadEternalToggle()
+      this.loadEquipmentCardToggle()
+      this.loadWeaponTraitsCardToggle()
+      this.loadCombineAllCardsToggle()
+      this.loadCurrentCharacters()
+    } else {
+      try {
+        const currentVersionResponse = await axios.get('https://corsproxy.io/?url=https://app.knightmodels.com/version', {})
+        if (currentVersionResponse.status === 200) {
+          const currentVersion = currentVersionResponse.data.version.toString()
+          const localVersion = window.localStorage.getItem('version')
+          if (currentVersion !== localVersion) {
+            const gameDataResponse = await axios.get('https://corsproxy.io/?url=https://app.knightmodels.com/gamedata', {})
+            if (gameDataResponse.status === 200) {
+              const gameData = gameDataResponse.data
+              window.localStorage.setItem('gamedata', JSON.stringify(gameData))
+              window.localStorage.setItem('version', currentVersion)
+              this.version = currentVersion
+              this.loaded = true
+              this.game_data = gameData
+              this.loadCurrentCrew()
+              this.loadEternalToggle()
+              this.loadEquipmentCardToggle()
+              this.loadWeaponTraitsCardToggle()
+              this.loadCombineAllCardsToggle()
+              this.loadCurrentCharacters()
+            } else {
+              this.error = true
+            }
           } else {
-            this.error = true
+            this.version = localVersion
+            const gameDataString = window.localStorage.getItem('gamedata')
+            if (gameDataString) {
+              const gameData = JSON.parse(gameDataString)
+              this.loaded = true
+              this.game_data = gameData
+              this.loadCurrentCrew()
+              this.loadEternalToggle()
+              this.loadEquipmentCardToggle()
+              this.loadWeaponTraitsCardToggle()
+              this.loadCombineAllCardsToggle()
+              this.loadCurrentCharacters()
+            } else {
+              this.error = true
+            }
           }
         } else {
-          this.version = localVersion
-          const gameDataString = window.localStorage.getItem('gamedata')
-          if (gameDataString) {
-            const gameData = JSON.parse(gameDataString)
-            this.loaded = true
-            this.game_data = gameData
-            this.loadCurrentCrew()
-            this.loadEternalToggle()
-            this.loadEquipmentCardToggle()
-            this.loadWeaponTraitsCardToggle()
-            this.loadCombineAllCardsToggle()
-            this.loadCurrentCharacters()
-          } else {
-            this.error = true
-          }
+          this.error = true
         }
-      } else {
+      } catch (e) {
+        console.log(e)
         this.error = true
       }
-    } catch (e) {
-      console.log(e)
-      this.error = true
     }
   },
   methods: {
