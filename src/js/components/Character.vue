@@ -27,7 +27,7 @@
             <div class="character__card__banner__pod">
               <small class="character__card__banner__pod__title">Aff</small>
               <div class="character__card__banner__pod__images">
-                <div v-if="affiliation.is_team === false" v-for="affiliation in characterAffiliations" :key="character.id+'-'+'affiliation-'+affiliation.id" :class="(localOnly ? 'character__card__banner__pod__image' : 'character__card__banner__pod__image--dark')+' img'" :style="'background-image:url('+(localOnly ? getIconFromAffiliation(affiliation) : affiliation.icon)+');'"></div>
+                <div v-for="affiliation in characterAffiliations" :key="character.id+'-'+'affiliation-'+affiliation.id" :class="(localOnly ? 'character__card__banner__pod__image' : 'character__card__banner__pod__image--dark')+' img'" :style="'background-image:url('+(localOnly ? getIconFromAffiliation(affiliation) : affiliation.icon)+');'"></div>
               </div>
             </div>
             <div class="character__card__banner__pod">
@@ -112,8 +112,8 @@
       <div class="character__card bg-white border border-black noprint">
         <div class="character__options">
           <h4 class="text-3xl mb-2">Equipment</h4>
-          <span v-for="equipment in availableEquipment" class="text-lg leading-none mb-1">
-            <input type="checkbox" :value="equipment.id" @input="toggleEquipment(equipment.id)" class="w-5 h-5"/>&nbsp;{{equipment.name}}
+          <span v-for="equipment in availableEquipment" class="text-lg leading-none mb-1 whitespace-nowrap">
+            <input type="checkbox" :value="equipment.id" @input="toggleEquipment(equipment.id)" class="w-5 h-5"/>&nbsp;{{equipment.name}} (<span>{{equipment.reputation}} rep</span> - <span>{{equipment.funding}} $)</span>
           </span>
           <template v-if="loading">
             <hr class="my-4 border-black px-4">
@@ -168,7 +168,7 @@ export default {
         'aff_unknown_icon',
         'aff_law_forces_icon',
         'aff_royal_flush_icon',
-        'aff_cults_blackflire_icon',
+        'aff_cults_blackfire_icon',
         'aff_batman_who_laughs_icon',
         'aff_cults_kobra_icon',
         'aff_harley_quinn_friends_icon',
