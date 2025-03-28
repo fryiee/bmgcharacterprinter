@@ -210,7 +210,7 @@ export default {
       this.icons.forEach((icon) => {
         const uppercaseIcon = icon.toUpperCase()
         if (alteredText.includes('{' + uppercaseIcon + '}')) {
-          alteredText = alteredText.replaceAll('{' + uppercaseIcon + '}', '<img src="/dist/img/icons/' + icon + '.svg" alt="' + icon + ' icon" class="inline h-6 w-auto"/>')
+          alteredText = alteredText.replaceAll('{' + uppercaseIcon + '}', '<img src="dist/img/icons/' + icon + '.svg" alt="' + icon + ' icon" class="inline h-6 w-auto"/>')
         }
       })
 
