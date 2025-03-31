@@ -179,9 +179,13 @@ export default {
       }
 
       if (!this.traitSearch || this.traitSearch === '') {
-        return this.game_data.traits
+        return [...this.game_data.traits].sort((a, b) => {
+          return a.name.localeCompare(b.name)
+        })
       } else {
-        return [...this.game_data.traits].filter(trait => trait.name.toLowerCase().includes(this.traitSearch.toLowerCase()))
+        return [...this.game_data.traits].filter(trait => trait.name.toLowerCase().includes(this.traitSearch.toLowerCase())).sort((a, b) => {
+          return a.name.localeCompare(b.name)
+        })
       }
     }
   },
